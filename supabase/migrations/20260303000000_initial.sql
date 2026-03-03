@@ -1,5 +1,5 @@
--- SOFIA ASOF — Schema do banco de dados Supabase
--- Execute este script no SQL Editor do Supabase
+-- SOFIA ASOF — Migração inicial
+-- Aplicada automaticamente pelo Supabase CLI: supabase db push
 
 -- 1. Habilitar a extensão pgvector para busca vetorial
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -56,9 +56,9 @@ CREATE POLICY "Documentos são leitura pública"
 
 CREATE POLICY "Inserção restrita ao serviço"
   ON documents FOR INSERT
-  WITH CHECK (true);  -- controle feito via service role key no script de ingestão
+  WITH CHECK (true);
 
--- 6. Tabela de histórico de chat (opcional — para futuras versões com auth)
+-- 6. Tabela de histórico de chat (para futuras versões com auth)
 CREATE TABLE IF NOT EXISTS chat_sessions (
   id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   messages   JSONB       NOT NULL DEFAULT '[]',

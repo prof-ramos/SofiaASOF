@@ -1,95 +1,181 @@
-import { createClient } from "@supabase/supabase-js";
-import { config } from "dotenv";
-import { glob } from "glob";
-import { readFileSync } from "fs";
-import { openai } from "@ai-sdk/openai";
-import { embed } from "ai";
+/**
+ * SOFIA — Script de Ingestão de Documentos
+ *
+ * Uso:
+ *   npm run ingest                     # processa todos os documentos em /docs
+ *   npm run ingest -- --file docs/lei.txt  # processa um arquivo específico
+ *
+ * Requisitos:
+ *   - Variáveis de ambiente: OPENAI_API_KEY, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+ *   - Schema Supabase aplicado (ver supabase/schema.sql)
+ *   - Documentos em texto plano ou PDF convertido em ./docs/
+ */
 
-config();
+import fs from 'fs'
+import path from 'path'
+import { createClient } from '@supabase/supabase-js'
+import OpenAI from 'openai'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// ── Configuração ────────────────────────────────────────────────────────────
 
-const embeddingModel = openai.embedding("text-embedding-3-small");
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY!
 
-interface DocumentChunk {
-  content: string;
-  source: string;
-  embedding: number[];
+const CHUNK_SIZE = 1000      // caracteres por chunk
+const CHUNK_OVERLAP = 200    // sobreposição entre chunks
+const BATCH_SIZE = 10        // embeddings por requisição
+
+// ── Clientes ────────────────────────────────────────────────────────────────
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
+
+// ── Tipos ────────────────────────────────────────────────────────────────────
+
+interface Chunk {
+  content: string
+  metadata: {
+    source: string
+    title: string
+    chunkIndex: number
+    totalChunks: number
+  }
 }
 
-async function chunkText(text: string, maxChunkSize = 1000): Promise<string[]> {
-  // Simple chunking by paragraphs
-  const paragraphs = text.split(/\n\n+/);
-  const chunks: string[] = [];
-  let currentChunk = "";
+// ── Funções auxiliares ───────────────────────────────────────────────────────
 
-  for (const paragraph of paragraphs) {
-    if ((currentChunk + paragraph).length > maxChunkSize) {
-      if (currentChunk) chunks.push(currentChunk.trim());
-      currentChunk = paragraph;
-    } else {
-      currentChunk += "\n\n" + paragraph;
+function splitIntoChunks(text: string, source: string, title: string): Chunk[] {
+  const chunks: Chunk[] = []
+  let start = 0
+
+  while (start < text.length) {
+    const end = Math.min(start + CHUNK_SIZE, text.length)
+    const content = text.slice(start, end).trim()
+
+    if (content.length > 50) {  // ignora chunks muito pequenos
+      chunks.push({
+        content,
+        metadata: { source, title, chunkIndex: chunks.length, totalChunks: 0 },
+      })
     }
+
+    start += CHUNK_SIZE - CHUNK_OVERLAP
   }
 
-  if (currentChunk) chunks.push(currentChunk.trim());
+  // Atualizar totalChunks após calcular todos
+  chunks.forEach(c => { c.metadata.totalChunks = chunks.length })
 
-  return chunks;
+  return chunks
 }
 
-async function ingestDocument(filePath: string): Promise<void> {
-  console.log(`Processing: ${filePath}`);
+async function generateEmbeddings(texts: string[]): Promise<number[][]> {
+  const response = await openai.embeddings.create({
+    model: 'text-embedding-3-small',
+    input: texts.map(t => t.replace(/\n/g, ' ')),
+  })
+  return response.data.map(d => d.embedding)
+}
 
-  const content = readFileSync(filePath, "utf-8");
-  const chunks = await chunkText(content);
+async function upsertChunks(chunks: Chunk[], embeddings: number[][]): Promise<void> {
+  const rows = chunks.map((chunk, i) => ({
+    content: chunk.content,
+    metadata: chunk.metadata,
+    embedding: embeddings[i],
+  }))
 
-  const source = filePath.split("/").pop() || filePath;
+  const { error } = await supabase.from('documents').insert(rows)
+  if (error) throw new Error(`Erro ao inserir chunks: ${error.message}`)
+}
 
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
+// ── Processamento de documentos ──────────────────────────────────────────────
 
-    if (!chunk.trim()) continue;
+interface DocumentConfig {
+  file: string
+  title: string
+}
 
-    console.log(`  Chunk ${i + 1}/${chunks.length}`);
+const DOCUMENTS: DocumentConfig[] = [
+  { file: 'lei-11440-2006.txt', title: 'Lei nº 11.440/2006 — Serviço Exterior Brasileiro' },
+  { file: 'decreto-9817-2019.txt', title: 'Decreto nº 9.817/2019 — Regulamenta a Lei nº 11.440/2006' },
+  { file: 'lei-8112-1990.txt', title: 'Lei nº 8.112/1990 — Regime Jurídico dos Servidores Públicos' },
+  { file: 'lei-8027-1990.txt', title: 'Lei nº 8.027/1990 — Normas de conduta dos servidores' },
+  { file: 'decreto-1171-1994.txt', title: 'Decreto nº 1.171/1994 — Código de Ética do Servidor Público' },
+  { file: 'decreto-7133-2010.txt', title: 'Decreto nº 7.133/2010 — Avaliação de desempenho e gratificações' },
+  { file: 'lei-12527-2011.txt', title: 'Lei nº 12.527/2011 — Lei de Acesso à Informação' },
+  { file: 'decreto-7724-2012.txt', title: 'Decreto nº 7.724/2012 — Regulamenta a LAI' },
+  { file: 'decreto-6134-2007.txt', title: 'Decreto nº 6.134/2007 — Remuneração no Exterior' },
+  { file: 'manual-redacao-itamaraty-2024.txt', title: 'Manual de Redação Oficial e Diplomática do Itamaraty (2024)' },
+  { file: 'manual-redacao-presidencia.txt', title: 'Manual de Redação da Presidência da República (3ª ed.)' },
+  { file: 'estatuto-asof.txt', title: 'Estatuto da ASOF' },
+]
 
-    const { embedding } = await embed({
-      model: embeddingModel,
-      value: chunk,
-    });
+async function processDocument(config: DocumentConfig, docsDir: string): Promise<void> {
+  const filePath = path.join(docsDir, config.file)
 
-    const { error } = await supabase.from("documents").insert({
-      content: chunk,
-      source: `${source} (parte ${i + 1})`,
-      embedding,
-    });
-
-    if (error) {
-      console.error(`  Error inserting chunk: ${error.message}`);
-    }
+  if (!fs.existsSync(filePath)) {
+    console.warn(`  ⚠️  Arquivo não encontrado: ${config.file} — ignorando.`)
+    return
   }
 
-  console.log(`  Done: ${chunks.length} chunks inserted`);
+  console.log(`  📄 Processando: ${config.title}`)
+  const text = fs.readFileSync(filePath, 'utf-8')
+  const chunks = splitIntoChunks(text, config.file, config.title)
+
+  console.log(`     ${chunks.length} chunks gerados`)
+
+  // Processar em lotes
+  for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+    const batch = chunks.slice(i, i + BATCH_SIZE)
+    const texts = batch.map(c => c.content)
+    const embeddings = await generateEmbeddings(texts)
+    await upsertChunks(batch, embeddings)
+    process.stdout.write(`     Lote ${Math.ceil((i + 1) / BATCH_SIZE)}/${Math.ceil(chunks.length / BATCH_SIZE)} ✓\r`)
+  }
+
+  console.log(`     ✅ Concluído: ${chunks.length} chunks inseridos`)
 }
+
+// ── Entrada principal ────────────────────────────────────────────────────────
 
 async function main() {
-  const pattern = process.argv[2] || "documents/**/*.txt";
-  const files = await glob(pattern);
+  console.log('\n🤖 SOFIA — Pipeline de Ingestão de Documentos')
+  console.log('═'.repeat(50))
 
-  if (files.length === 0) {
-    console.log("No files found matching pattern:", pattern);
-    return;
+  // Validar variáveis de ambiente
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !OPENAI_API_KEY) {
+    console.error('❌ Variáveis de ambiente ausentes. Verifique .env.local')
+    process.exit(1)
   }
 
-  console.log(`Found ${files.length} files to ingest\n`);
+  const docsDir = path.join(process.cwd(), 'docs')
 
-  for (const file of files) {
-    await ingestDocument(file);
+  if (!fs.existsSync(docsDir)) {
+    fs.mkdirSync(docsDir, { recursive: true })
+    console.log(`📁 Diretório criado: ${docsDir}`)
+    console.log('   Coloque os documentos .txt neste diretório e execute novamente.')
+    process.exit(0)
   }
 
-  console.log("\nIngestion complete!");
+  // Verificar argumento --file para processar arquivo específico
+  const fileArg = process.argv.find(a => a.startsWith('--file='))
+  if (fileArg) {
+    const filePath = fileArg.replace('--file=', '')
+    const fileName = path.basename(filePath)
+    const title = fileName.replace(/\.[^/.]+$/, '').replace(/-/g, ' ')
+    await processDocument({ file: fileName, title }, path.dirname(filePath))
+  } else {
+    console.log(`📁 Processando documentos em: ${docsDir}\n`)
+    for (const doc of DOCUMENTS) {
+      await processDocument(doc, docsDir)
+    }
+  }
+
+  console.log('\n✅ Ingestão concluída com sucesso!')
+  console.log('   A base de conhecimento da SOFIA está atualizada.\n')
 }
 
-main().catch(console.error);
+main().catch(err => {
+  console.error('\n❌ Erro fatal:', err.message)
+  process.exit(1)
+})
