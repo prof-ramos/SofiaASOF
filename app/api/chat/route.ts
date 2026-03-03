@@ -4,10 +4,54 @@ import type { TextUIPart } from 'ai'
 import { retrieveContext, buildContextPrompt } from '@/lib/rag'
 import { SOFIA_SYSTEM_PROMPT } from '@/lib/system-prompt'
 import { safeValidateChatRequest, toUIMessages } from '@/lib/validation/schemas'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const maxDuration = 30
 
+// Rate limit config: 20 requests per minute per IP
+const RATE_LIMIT_CONFIG = { interval: 60_000, limit: 20 }
+
+function getClientIdentifier(req: Request): string {
+  // Try various headers for client IP (Vercel, Cloudflare, etc.)
+  const forwarded = req.headers.get('x-forwarded-for')
+  if (forwarded) {
+    return forwarded.split(',')[0].trim()
+  }
+
+  const realIp = req.headers.get('x-real-ip')
+  if (realIp) {
+    return realIp
+  }
+
+  // Fallback to a default identifier (not ideal but prevents crashes)
+  return 'anonymous'
+}
+
 export async function POST(req: Request) {
+  // 0. Rate limiting
+  const clientId = getClientIdentifier(req)
+  const rateCheck = rateLimit(clientId, RATE_LIMIT_CONFIG)
+
+  if (rateCheck.isRateLimited) {
+    return new Response(
+      JSON.stringify({
+        error: 'Limite de requisições excedido',
+        details: `Aguarde ${Math.ceil((rateCheck.reset - Date.now()) / 1000)}s antes de tentar novamente.`,
+        retryAfter: Math.ceil((rateCheck.reset - Date.now()) / 1000),
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(Math.ceil((rateCheck.reset - Date.now()) / 1000)),
+          'X-RateLimit-Limit': String(rateCheck.limit),
+          'X-RateLimit-Remaining': String(rateCheck.remaining),
+          'X-RateLimit-Reset': String(rateCheck.reset),
+        },
+      }
+    )
+  }
+
   // 1. Validar API key
   if (!process.env.OPENAI_API_KEY) {
     return new Response(
