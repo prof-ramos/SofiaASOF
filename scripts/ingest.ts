@@ -87,7 +87,7 @@ async function upsertChunks(chunks: Chunk[], embeddings: number[][]): Promise<vo
     embedding: embeddings[i],
   }))
 
-  const { error } = await supabase.from('documents').insert(rows)
+  const { error } = await supabase.from('sofia_documents').insert(rows)
   if (error) throw new Error(`Erro ao inserir chunks: ${error.message}`)
 }
 
