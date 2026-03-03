@@ -1,96 +1,74 @@
 # Base de Conhecimento - SOFIA
 
-## Documentos para Ingestão Inicial
+## Documentos Ingeridos (Atualizado: 03/03/2026)
 
-### 1. Legislação Estruturante
+### Leis
 
-| Norma | Prioridade | Status |
-|-------|------------|--------|
-| Lei nº 11.440/2006 | Alta | Pendente |
-| Decreto nº 9.817/2019 | Alta | Pendente |
-| Lei nº 8.112/1990 | Alta | Pendente |
-| Lei nº 8.027/1990 | Média | Pendente |
-| Decreto nº 1.171/1994 | Média | Pendente |
-| Decreto nº 7.133/2010 | Média | Pendente |
-| Lei nº 12.527/2011 (LAI) | Baixa | Pendente |
-| Decreto nº 7.724/2012 | Baixa | Pendente |
+| Norma | Chunks | Status |
+|-------|--------|--------|
+| Lei nº 11.440/2006 - Regime Jurídico SEB | 71 | ✅ Vigente |
+| Lei nº 8.112/1990 - RJU (compilado) | 203 | ✅ Vigente |
+| Lei nº 8.829/1993 - Carreiras OC/AC | 27 | ✅ Vigente |
 
-### 2. Benefícios e Remuneração no Exterior
+### Decretos
 
-| Norma | Prioridade | Status |
-|-------|------------|--------|
-| Lei nº 9.615/1998 | Alta | Pendente |
-| Decreto nº 6.134/2007 | Alta | Pendente |
-| Portarias MRE (vigentes) | Alta | Pendente |
+| Norma | Chunks | Status |
+|-------|--------|--------|
+| Decreto nº 11.357/2015 - Regulamento SEB | 135 | ✅ Vigente |
+| Decreto nº 93.325/1986 - Regulamento Pessoal | 80 | ✅ Vigente |
+| Decreto nº 1.565/1995 - Carreiras OC/AC | 48 | ✅ Vigente |
+| Decreto nº 1.171/1994 - Código de Ética | 17 | ✅ Vigente |
 
-### 3. Redação Oficial
+### Tratados e Convenções
 
-| Documento | Prioridade | Status |
-|-----------|------------|--------|
-| Manual de Redação Oficial e Diplomática do Itamaraty (2024) | Alta | Pendente |
-| Manual de Redação da Presidência da República | Média | Pendente |
+| Documento | Chunks | Status |
+|-----------|--------|--------|
+| Convenção de Viena (1961) - Relações Diplomáticas | 45 | ✅ Vigente |
+| Convenção sobre Asilo Diplomático | 14 | ✅ Vigente |
 
-### 4. Documentos ASOF
+### Outros
 
-| Documento | Prioridade | Status |
-|-----------|------------|--------|
-| Estatuto da ASOF | Alta | Pendente |
-| Posicionamentos institucionais | Média | Pendente |
-| Comunicados e circulares | Baixa | Pendente |
+| Documento | Chunks | Status |
+|-----------|--------|--------|
+| Resolução CN nº 1/2006 - Orçamento | 119 | ✅ Vigente |
 
-### 5. Concurso
+---
 
-| Documento | Prioridade | Status |
-|-----------|------------|--------|
-| Edital CESPE/CEBRASPE (vigente) | Alta | Pendente |
+**Total: 10 documentos | 759 chunks**
 
-## Formato dos Arquivos
+## Documentos Removidos (Revogados/Redundantes)
 
-- **Formato**: Texto simples (`.txt`)
-- **Codificação**: UTF-8
-- **Nomeclatura**: `[tipo]-[numero]-[ano].txt`
-  - Exemplo: `lei-11440-2006.txt`, `decreto-9817-2019.txt`
+| Norma | Motivo |
+|-------|--------|
+| Lei nº 7.501/1986 | Revogada pela Lei 11.440/2006 |
+| Lei nº 9.888/1999 | Revogada pela Lei 11.440/2006 |
+| Lei nº 8.112/1990 (original) | Mantido apenas compilado |
+| MPV 319/2006 | Convertida na Lei 11.440/2006 |
 
 ## Estrutura de Diretórios
 
 ```
-documents/
+docs/
 ├── leis/
-│   ├── lei-11440-2006.txt
-│   ├── lei-8112-1990.txt
-│   ├── lei-8027-1990.txt
-│   ├── lei-9615-1998.txt
-│   └── lei-12527-2011.txt
+│   ├── lei-11440-2006-servico-exterior.txt
+│   ├── lei-8112-1990-rju-compilado.txt
+│   └── lei-8829-1993-carreiras-oc-ac.txt
 ├── decretos/
-│   ├── decreto-9817-2019.txt
-│   ├── decreto-6134-2007.txt
-│   ├── decreto-1171-1994.txt
-│   ├── decreto-7133-2010.txt
-│   └── decreto-7724-2012.txt
-├── manuais/
-│   ├── redacao-oficial-itamaraty-2024.txt
-│   └── redacao-presidencia.txt
-├── portarias/
-│   └── [portarias-mre].txt
-├── asof/
-│   ├── estatuto.txt
-│   ├── posicionamentos.txt
-│   └── comunicados.txt
-└── concursos/
-    └── edital-oficial-chancelaria.txt
+│   ├── decreto-11357-2015.txt
+│   ├── decreto-93325-1986-regulamento-pessoal-seb.txt
+│   ├── decreto-1565-1995-carreiras-oc-ac.txt
+│   └── decreto-1171-1994-codigo-etica.txt
+├── convencoes/
+│   ├── convencao-viena-relacoes-diplomaticas-1961.txt
+│   └── convencao-asilo-diplomatico.txt
+└── outros/
+    └── resolucao-1-2006-cn-orcamento.txt
 ```
-
-## Fontes
-
-- **Leis e Decretos**: Planalto.gov.br
-- **Manuais MRE**: Itamaraty.gov.br
-- **Documentos ASOF**: Fornecidos pela Coordenação Administrativa
-- **Editais**: Cebraspe.cest.br
 
 ## Próximos Passos
 
-1. [ ] Baixar textos originais das leis/decretos
-2. [ ] Converter para texto simples
-3. [ ] Limpar formatação (cabeçalhos, rodapés)
-4. [ ] Organizar na estrutura de diretórios
-5. [ ] Executar ingestão
+1. [ ] Adicionar Manual de Redação Oficial Itamaraty
+2. [ ] Adicionar Estatuto da ASOF
+3. [ ] Adicionar editais de concurso CEBRASPE
+4. [ ] Adicionar Lei nº 9.615/1998 (Benefícios SE)
+5. [ ] Adicionar portarias MRE relevantes
