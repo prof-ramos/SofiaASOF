@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "ingest": "tsx scripts/ingest.ts",
+    "migrate": "tsx scripts/run-migration.ts",
+    "validate": "tsx scripts/validate-metrics.ts",
+    "test:metrics": "tsx scripts/test-metrics-sdk.ts",
+    "setup:metrics": "tsx scripts/setup-metrics-sdk.ts",
     "db:push": "supabase db push",
     "db:status": "supabase migration list",
     "deploy:prev": "vercel",
@@ -27,6 +31,7 @@
     "openai": "^6.25.0",
     "pg": "^8.19.0",
     "radix-ui": "^1.4.3",
+    "@supabase/supabase-js": "^2.98.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
@@ -36,7 +41,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.98.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
