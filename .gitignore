@@ -48,3 +48,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OMC State and generated reports
+/repomix-output.xml
+.omc/state/
+.env*.local

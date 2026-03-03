@@ -659,6 +659,63 @@ Arquivos ausentes são ignorados com aviso (`⚠️`). Os demais documentos são
 
 ---
 
+## Validação de entrada (Zod)
+
+O endpoint `/api/chat` utiliza **Zod v3.24.1** para validar todas as requisições antes do processamento.
+
+### Schema de validação
+
+```typescript
+// lib/validation/schemas.ts
+ChatRequestSchema = z.object({
+  messages: z.array(MessageSchema)
+    .min(1, 'Ao menos uma mensagem é obrigatória')
+    .max(50, 'Máximo de 50 mensagens por requisição')
+})
+
+MessageSchema = z.object({
+  id: z.string().min(1),
+  role: z.enum(['user', 'assistant', 'system']),
+  parts: z.array(MessagePartSchema)
+    .min(1)
+    .max(20)
+})
+```
+
+### Limites validados
+
+| Campo | Limite | Erro HTTP |
+|-------|--------|-----------|
+| `messages` | 1-50 mensagens | `400` |
+| `parts` por mensagem | 1-20 partes | `400` |
+| `text` por parte | 10.000 caracteres | `400` |
+
+### Resposta de validação (HTTP 400)
+
+```json
+{
+  "error": "Dados inválidos",
+  "details": [
+    {
+      "path": "messages.0.parts.0.text",
+      "message": "Mensagem muito longa (máximo 10.000 caracteres)"
+    }
+  ]
+}
+```
+
+### Tipos suportados
+
+| Tipo | Descrição |
+|------|-----------|
+| `text` | Partes de texto (único tipo no MVP) |
+| `image` | Partes de imagem (reservado para futuro) |
+| `data` | Partes de dados genéricos (tool calls, etc) |
+| `tool-call` | Chamadas de ferramentas |
+| `tool-result` | Resultados de ferramentas |
+
+---
+
 ## Códigos de status e erros
 
 ### HTTP

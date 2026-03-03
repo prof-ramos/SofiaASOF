@@ -16,6 +16,7 @@ Chatbot com RAG para orientação de Oficiais de Chancelaria sobre a carreira no
 | Banco vetorial | Supabase pgvector |
 | Embeddings | OpenAI text-embedding-3-small |
 | UI | shadcn/ui + Tailwind CSS |
+| Validação | Zod v3.24.1 |
 
 ---
 
@@ -119,7 +120,9 @@ Acesse [http://localhost:3000](http://localhost:3000).
 ├── lib/
 │   ├── rag.ts                 # Pipeline RAG (embeddings + busca vetorial)
 │   ├── supabase.ts            # Clientes Supabase
-│   └── system-prompt.ts       # System prompt da SOFIA
+│   ├── system-prompt.ts       # System prompt da SOFIA
+│   └── validation/
+│       └── schemas.ts         # Schemas de validação Zod
 ├── scripts/
 │   └── ingest.ts              # Script de ingestão de documentos
 ├── supabase/
@@ -134,9 +137,15 @@ Acesse [http://localhost:3000](http://localhost:3000).
 ## Fluxo RAG
 
 ```
-Usuário → API Route → Embedding da pergunta → Busca vetorial (Supabase)
+Usuário → API Route → Validação (Zod) → Embedding da pergunta → Busca vetorial (Supabase)
 → Chunks relevantes → System prompt + contexto → OpenAI GPT-4o → Streaming
 ```
+
+## Segurança
+
+- **Validação de entrada**: Schema Zod valida todos os payloads da API
+- **Rate limiting**: Previne abusos com limites de 50 mensagens e 10.000 caracteres
+- **Variáveis de ambiente**: Credenciais isoladas no servidor
 
 ---
 

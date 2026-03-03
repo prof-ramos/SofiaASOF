@@ -1,24 +1,69 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages } from 'ai'
-import type { UIMessage } from 'ai'
+import type { TextUIPart } from 'ai'
 import { retrieveContext, buildContextPrompt } from '@/lib/rag'
 import { SOFIA_SYSTEM_PROMPT } from '@/lib/system-prompt'
+import { safeValidateChatRequest, toUIMessages } from '@/lib/validation/schemas'
 
 export const maxDuration = 30
 
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
-
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json()
+  // 1. Validar API key
+  if (!process.env.OPENAI_API_KEY) {
+    return new Response(
+      JSON.stringify({ error: 'Configuração do Servidor Incompleta: OPENAI_API_KEY ausente.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  // 2. Parse e validar corpo da requisição
+  let requestBody: unknown
+  try {
+    requestBody = await req.json()
+  } catch (parseError) {
+    return new Response(
+      JSON.stringify({
+        error: 'JSON inválido',
+        details: 'O corpo da requisição deve ser um JSON válido'
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  // 3. Validar schema com Zod
+  const validationResult = safeValidateChatRequest(requestBody)
+  if (!validationResult.success) {
+    const error = validationResult.error
+    const formattedErrors = error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }))
+
+    return new Response(
+      JSON.stringify({
+        error: 'Dados inválidos',
+        details: formattedErrors
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  const { messages } = validationResult.data
+
+  // 4. Converter mensagens validadas para UIMessage[]
+  const uiMessages = toUIMessages(messages)
+
+  // 5. Inicializar cliente OpenAI
+  const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
   // Extrair texto da última mensagem do usuário para busca RAG
-  const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')
+  const lastUserMessage = [...uiMessages].reverse().find((m) => m.role === 'user')
   let contextPrompt = ''
 
   if (lastUserMessage) {
     const text = lastUserMessage.parts
-      .filter(p => p.type === 'text')
-      .map(p => (p as { type: 'text'; text: string }).text)
+      .filter((p): p is TextUIPart => p.type === 'text')
+      .map((p) => p.text)
       .join(' ')
 
     const sources = await retrieveContext(text)
@@ -26,7 +71,7 @@ export async function POST(req: Request) {
   }
 
   // Converter UIMessages para ModelMessages (formato esperado pelo LLM)
-  const modelMessages = await convertToModelMessages(messages)
+  const modelMessages = await convertToModelMessages(uiMessages)
 
   const result = streamText({
     model: openai('gpt-4o'),

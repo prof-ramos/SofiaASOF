@@ -13,7 +13,12 @@ import { Button } from '@/components/ui/button'
 export function ChatInterface() {
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), [])
 
-  const { messages, sendMessage, status, setMessages } = useChat({ transport })
+  const { messages, sendMessage, status, setMessages, error, regenerate } = useChat({
+    transport,
+    onError: (err) => {
+      console.error('[CHAT INTERFACE ERROR]:', err)
+    },
+  })
 
   const [input, setInput] = useState('')
   const isLoading = status === 'submitted' || status === 'streaming'
@@ -75,6 +80,23 @@ export function ChatInterface() {
           <MessageList messages={messages} isLoading={isLoading} />
         )}
       </main>
+
+      {/* Erro e Retry */}
+      {error && (
+        <div className="px-4 py-3 bg-destructive/10 border-t border-destructive/20 flex items-center justify-between gap-4">
+          <p className="text-sm text-destructive font-medium">
+            Ocorreu um erro na conexão. Por favor, tente novamente.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => regenerate()}
+            className="h-8 border-destructive/30 text-destructive hover:bg-destructive/10"
+          >
+            Tentar novamente
+          </Button>
+        </div>
+      )}
 
       {/* Input */}
       <ChatInput

@@ -1,10 +1,7 @@
-export interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  sources?: Source[]
-  createdAt?: Date
-}
+/**
+ * Tipos de chat (Message, ChatRequest) são definidos e validados via Zod em:
+ * @/lib/validation/schemas.ts
+ */
 
 export interface Source {
   title: string
@@ -20,10 +17,8 @@ export interface DocumentChunk {
     title: string
     article?: string
     page?: number
+    chunkIndex?: number
+    totalChunks?: number
   }
   embedding?: number[]
-}
-
-export interface ChatRequest {
-  messages: Message[]
 }

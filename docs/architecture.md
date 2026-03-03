@@ -17,11 +17,18 @@ A SOFIA é um chatbot com RAG (Retrieval-Augmented Generation) que permite consu
 ### API Routes
 
 - **`/api/chat`**: Endpoint principal do chat
+  - **Validação**: Schema Zod valida payload (limite de 50 mensagens, 10.000 caracteres)
   - Recebe mensagens do usuário
   - Gera embedding da pergunta
   - Busca documentos relevantes no Supabase
   - Monta prompt com contexto
   - Retorna resposta em streaming
+
+### Validação
+
+- **`lib/validation/schemas.ts`**: Schemas Zod para validação de entrada
+  - Valida estrutura, tipos e limites de tamanho
+  - Retorna HTTP 400 com erros detalhados se validação falhar
 
 ### Supabase
 
@@ -88,10 +95,33 @@ documents/
 
 ## Segurança
 
+- **Validação de entrada**: Schema Zod valida todos os payloads da API (limite de 50 mensagens, 10.000 caracteres)
 - **Variáveis de ambiente**: Todas as chaves são armazenadas no Vercel/Supabase
 - **Service Role Key**: Usada apenas no backend para operações administrativas
 - **Anon Key**: Chave pública para operações do frontend
 - **Sem dados pessoais**: O MVP não armazena dados pessoais dos usuários
+
+### Camada de Validação
+
+```
+[Usuário] → [Frontend] → [API /chat]
+                           ↓
+                    [Parse JSON]
+                           ↓
+                    [Validação Zod] → HTTP 400 se inválido
+                           ↓
+                    [Gerar Embedding]
+                           ↓
+                    [Busca Vetorial] → [Supabase]
+                           ↓
+                    [Recuperar Contexto]
+                           ↓
+                    [Montar Prompt] → [System Prompt + Contexto]
+                           ↓
+                    [Gerar Resposta] → [OpenAI GPT-4o]
+                           ↓
+                    [Streaming] → [Frontend] → [Usuário]
+```
 
 ## Custos (Estimativa)
 
