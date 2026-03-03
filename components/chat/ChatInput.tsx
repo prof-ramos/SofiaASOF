@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, useRef } from 'react'
+import { type FormEvent, useRef, memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { SendHorizonal, Loader2 } from 'lucide-react'
@@ -12,17 +12,19 @@ interface ChatInputProps {
   onSubmit: (e: FormEvent<HTMLFormElement>) => void
 }
 
-export function ChatInput({ input, isLoading, onInputChange, onSubmit }: ChatInputProps) {
+export const ChatInput = memo(function ChatInput({ input, isLoading, onInputChange, onSubmit }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      if (input.trim() && !isLoading) {
-        const form = textareaRef.current?.closest('form')
-        form?.requestSubmit()
-      }
-    }
+    // Early exit for non-Enter keys
+    if (e.key !== 'Enter' || e.shiftKey) return
+
+    // Early exit if no input or loading
+    if (!input.trim() || isLoading) return
+
+    e.preventDefault()
+    const form = textareaRef.current?.closest('form')
+    form?.requestSubmit()
   }
 
   return (
@@ -52,4 +54,4 @@ export function ChatInput({ input, isLoading, onInputChange, onSubmit }: ChatInp
       </Button>
     </form>
   )
-}
+})

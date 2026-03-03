@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import type { UIMessage } from 'ai'
@@ -18,11 +19,12 @@ function getTextContent(message: UIMessage): string {
     .join('')
 }
 
-export function MessageItem({ message }: MessageItemProps) {
-  const isUser = message.role === 'user'
+export const MessageItem = memo(function MessageItem({ message }: MessageItemProps) {
   const text = getTextContent(message)
 
   if (!text) return null
+
+  const isUser = message.role === 'user'
 
   return (
     <div className={cn('flex gap-3 px-4 py-3', isUser ? 'flex-row-reverse' : 'flex-row')}>
@@ -64,4 +66,4 @@ export function MessageItem({ message }: MessageItemProps) {
       </div>
     </div>
   )
-}
+})

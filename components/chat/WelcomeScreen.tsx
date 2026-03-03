@@ -1,6 +1,7 @@
 'use client'
 
 import { Scale } from 'lucide-react'
+import { memo } from 'react'
 
 const SUGGESTED_QUESTIONS = [
   'Quais são os requisitos para promoção ao padrão seguinte?',
@@ -9,20 +10,32 @@ const SUGGESTED_QUESTIONS = [
   'O que diz a Lei nº 11.440/2006 sobre a carreira de Oficial de Chancelaria?',
   'Quais são as etapas do concurso público para Oficial de Chancelaria?',
   'Quais são os direitos previstos no RJU aplicáveis à carreira?',
-]
+] as const
+
+// Hoist static JSX elements
+const LOGO_ICON = (
+  <div className="h-20 w-20 rounded-full bg-emerald-700 flex items-center justify-center shadow-lg">
+    <Scale className="h-10 w-10 text-white" />
+  </div>
+)
+
+const DISCLAIMER_TEXT = (
+  <p className="text-xs text-muted-foreground max-w-sm">
+    As respostas da SOFIA têm caráter informativo e não constituem parecer jurídico
+    vinculante.
+  </p>
+)
 
 interface WelcomeScreenProps {
   onSelectQuestion: (question: string) => void
 }
 
-export function WelcomeScreen({ onSelectQuestion }: WelcomeScreenProps) {
+export const WelcomeScreen = memo(function WelcomeScreen({ onSelectQuestion }: WelcomeScreenProps) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-6 py-12 text-center gap-8">
       {/* Logo e título */}
       <div className="flex flex-col items-center gap-4">
-        <div className="h-20 w-20 rounded-full bg-emerald-700 flex items-center justify-center shadow-lg">
-          <Scale className="h-10 w-10 text-white" />
-        </div>
+        {LOGO_ICON}
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">SOFIA</h1>
           <p className="text-sm text-muted-foreground mt-1 font-medium uppercase tracking-widest">
@@ -54,10 +67,7 @@ export function WelcomeScreen({ onSelectQuestion }: WelcomeScreenProps) {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground max-w-sm">
-        As respostas da SOFIA têm caráter informativo e não constituem parecer jurídico
-        vinculante.
-      </p>
+      {DISCLAIMER_TEXT}
     </div>
   )
-}
+})

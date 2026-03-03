@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
-import { useState, useMemo, type FormEvent } from 'react'
+import { useState, useMemo, type FormEvent, memo } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { MessageList } from './MessageList'
 import { ChatInput } from './ChatInput'
@@ -10,7 +10,7 @@ import { WelcomeScreen } from './WelcomeScreen'
 import { Scale, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function ChatInterface() {
+export const ChatInterface = memo(function ChatInterface() {
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), [])
 
   const { messages, sendMessage, status, setMessages, error, regenerate } = useChat({
@@ -25,13 +25,17 @@ export function ChatInterface() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // Early exit if no input or loading
     if (!input.trim() || isLoading) return
+
     const text = input
     setInput('')
     await sendMessage({ text })
   }
 
   const handleSelectQuestion = async (question: string) => {
+    // Early exit if loading
     if (isLoading) return
     await sendMessage({ text: question })
   }
@@ -107,4 +111,4 @@ export function ChatInterface() {
       />
     </div>
   )
-}
+})
