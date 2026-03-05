@@ -5,8 +5,18 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import type { UIMessage } from 'ai'
 import { Scale } from 'lucide-react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import dynamic from 'next/dynamic'
+
+// Dynamic import para markdown (~55KB saving)
+const MarkdownRenderer = dynamic(
+  () => import('./MarkdownRenderer').then(mod => ({ default: mod.MarkdownRenderer })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="animate-pulse bg-muted h-4 rounded w-3/4" />
+    )
+  }
+)
 
 interface MessageItemProps {
   message: UIMessage
@@ -58,9 +68,7 @@ export const MessageItem = memo(function MessageItem({ message }: MessageItemPro
           {isUser ? (
             text
           ) : (
-            <div className="prose-sm max-w-none [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_li]:mb-1 [&_p]:mb-2 last:[&_p]:mb-0 [&_strong]:font-semibold">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
-            </div>
+            <MarkdownRenderer content={text} />
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1772504922358,
+  "lastScanned": 1772678517456,
   "projectRoot": ".",
   "techStack": {
     "languages": [
@@ -36,6 +36,11 @@
         "name": "react-dom",
         "version": "19.2.3",
         "category": "frontend"
+      },
+      {
+        "name": "vitest",
+        "version": "4.0.18",
+        "category": "testing"
       }
     ],
     "packageManager": "npm",
@@ -63,7 +68,7 @@
     "namingStyle": "camelCase",
     "importStyle": "ES modules",
     "testPattern": null,
-    "fileOrganization": "type-based"
+    "fileOrganization": null
   },
   "structure": {
     "isMonorepo": false,
@@ -87,7 +92,7 @@
       "path": "app",
       "purpose": "Application code",
       "fileCount": 4,
-      "lastAccessed": 1772504922321,
+      "lastAccessed": 1772678517442,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -99,15 +104,14 @@
       "path": "components",
       "purpose": "UI components",
       "fileCount": 0,
-      "lastAccessed": 1772506673498,
-      "keyFiles": [],
-      "placeholder": true
+      "lastAccessed": 1772678517443,
+      "keyFiles": []
     },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 5,
-      "lastAccessed": 1772504922322,
+      "lastAccessed": 1772678517443,
       "keyFiles": [
         "api-reference.md",
         "architecture.md",
@@ -118,10 +122,11 @@
     "lib": {
       "path": "lib",
       "purpose": "Library code",
-      "fileCount": 4,
-      "lastAccessed": 1772504922323,
+      "fileCount": 5,
+      "lastAccessed": 1772678517449,
       "keyFiles": [
         "rag.ts",
+        "rate-limit.ts",
         "supabase.ts",
         "system-prompt.ts",
         "utils.ts"
@@ -131,7 +136,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1772504922323,
+      "lastAccessed": 1772678517449,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -144,7 +149,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 2,
-      "lastAccessed": 1772504922338,
+      "lastAccessed": 1772678517450,
       "keyFiles": [
         "ingest.ts",
         "setup.sh"
@@ -154,7 +159,7 @@
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1772504922338,
+      "lastAccessed": 1772678517450,
       "keyFiles": [
         "schema.sql"
       ]
@@ -163,7 +168,7 @@
       "path": "types",
       "purpose": "Type definitions",
       "fileCount": 1,
-      "lastAccessed": 1772504922338,
+      "lastAccessed": 1772678517450,
       "keyFiles": [
         "index.ts"
       ]
@@ -172,15 +177,23 @@
       "path": "app/api",
       "purpose": "API routes",
       "fileCount": 0,
-      "lastAccessed": 1772506673498,
-      "keyFiles": [],
-      "placeholder": true
+      "lastAccessed": 1772678517450,
+      "keyFiles": []
+    },
+    "lib/__tests__": {
+      "path": "lib/__tests__",
+      "purpose": "Test files",
+      "fileCount": 1,
+      "lastAccessed": 1772678517451,
+      "keyFiles": [
+        "rag.test.ts"
+      ]
     },
     "supabase/migrations": {
       "path": "supabase/migrations",
       "purpose": "Database migrations",
       "fileCount": 1,
-      "lastAccessed": 1772504922339,
+      "lastAccessed": 1772678517452,
       "keyFiles": [
         "20260303000000_initial.sql"
       ]
@@ -188,201 +201,123 @@
   },
   "hotPaths": [
     {
-      "path": "",
-      "accessCount": 22,
-      "lastAccessed": 1772506753436,
-      "type": "directory"
-    },
-    {
-      "path": "app/api/chat/route.ts",
-      "accessCount": 14,
-      "lastAccessed": 1772507138199,
+      "path": "lib/rag.ts",
+      "accessCount": 16,
+      "lastAccessed": 1772682564437,
       "type": "file"
     },
     {
-      "path": "lib/rag.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772506750267,
+      "path": "app/test-connection/page.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1772682558040,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/WelcomeScreen.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1772682583491,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/MarkdownRenderer.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1772682632791,
+      "type": "file"
+    },
+    {
+      "path": "app/page.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772682587875,
       "type": "file"
     },
     {
       "path": "package.json",
-      "accessCount": 3,
-      "lastAccessed": 1772506988263,
+      "accessCount": 7,
+      "lastAccessed": 1772682611623,
       "type": "file"
     },
     {
-      "path": "lib/validation/schemas.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772507109444,
+      "path": "components/AGENTS.md",
+      "accessCount": 6,
+      "lastAccessed": 1772682611697,
       "type": "file"
     },
     {
-      "path": "repomix-output.xml",
+      "path": "components/chat/MessageItem.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1772681269569,
+      "type": "file"
+    },
+    {
+      "path": "app/api/chat/AGENTS.md",
+      "accessCount": 5,
+      "lastAccessed": 1772682597870,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/AGENTS.md",
+      "accessCount": 4,
+      "lastAccessed": 1772682583777,
+      "type": "file"
+    },
+    {
+      "path": "docs/AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1772506609510,
+      "lastAccessed": 1772681571103,
       "type": "file"
     },
     {
-      "path": "lib/utils.ts",
+      "path": "app/AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1772506694022,
+      "lastAccessed": 1772681574578,
       "type": "file"
     },
     {
-      "path": "types/index.ts",
+      "path": "supabase/AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1772506697615,
+      "lastAccessed": 1772681575510,
       "type": "file"
     },
     {
-      "path": "lib/supabase.ts",
+      "path": "lib/AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1772506701882,
+      "lastAccessed": 1772681578976,
       "type": "file"
     },
     {
-      "path": "scripts/ingest.ts",
+      "path": "AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1772506701957,
+      "lastAccessed": 1772681589695,
       "type": "file"
     },
     {
-      "path": "README.md",
+      "path": "app/api/chat/route.ts",
       "accessCount": 2,
-      "lastAccessed": 1772506702025,
-      "type": "file"
-    },
-    {
-      "path": "PRD.md",
-      "accessCount": 2,
-      "lastAccessed": 1772506702168,
-      "type": "file"
-    },
-    {
-      "path": "docs/architecture.md",
-      "accessCount": 2,
-      "lastAccessed": 1772506740317,
-      "type": "file"
-    },
-    {
-      "path": "docs/knowledge-base.md",
-      "accessCount": 2,
-      "lastAccessed": 1772506740335,
-      "type": "file"
-    },
-    {
-      "path": "supabase/migrations/20260303000000_initial.sql",
-      "accessCount": 2,
-      "lastAccessed": 1772506746230,
-      "type": "file"
-    },
-    {
-      "path": "scripts/setup.sh",
-      "accessCount": 1,
-      "lastAccessed": 1772506614252,
-      "type": "file"
-    },
-    {
-      "path": ".env.local.example",
-      "accessCount": 1,
-      "lastAccessed": 1772506694075,
-      "type": "file"
-    },
-    {
-      "path": "lib/system-prompt.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772506694084,
-      "type": "file"
-    },
-    {
-      "path": "tsconfig.json",
-      "accessCount": 1,
-      "lastAccessed": 1772506694089,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/ChatInterface.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772506697606,
+      "lastAccessed": 1772681592784,
       "type": "file"
     },
     {
       "path": "app/layout.tsx",
       "accessCount": 1,
-      "lastAccessed": 1772506697625,
+      "lastAccessed": 1772681581764,
       "type": "file"
     },
     {
-      "path": "components/chat/WelcomeScreen.tsx",
+      "path": "lib/validation/AGENTS.md",
       "accessCount": 1,
-      "lastAccessed": 1772506701583,
+      "lastAccessed": 1772681817430,
       "type": "file"
     },
     {
-      "path": "components/chat/MessageList.tsx",
+      "path": "components/chat/AGENTS.md",
       "accessCount": 1,
-      "lastAccessed": 1772506701591,
+      "lastAccessed": 1772681830435,
       "type": "file"
     },
     {
-      "path": "next.config.ts",
+      "path": "vitest.config.ts",
       "accessCount": 1,
-      "lastAccessed": 1772506701736,
-      "type": "file"
-    },
-    {
-      "path": "tailwind.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772506701908,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/ChatInput.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772506702003,
-      "type": "file"
-    },
-    {
-      "path": "docs/api-reference.md",
-      "accessCount": 1,
-      "lastAccessed": 1772506702195,
-      "type": "file"
-    },
-    {
-      "path": "vercel.json",
-      "accessCount": 1,
-      "lastAccessed": 1772506729744,
-      "type": "file"
-    },
-    {
-      "path": "components/ui/button.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772506735424,
-      "type": "file"
-    },
-    {
-      "path": "components/ui/scroll-area.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772506735446,
-      "type": "file"
-    },
-    {
-      "path": "components/ui/textarea.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772506735448,
-      "type": "file"
-    },
-    {
-      "path": "app/globals.css",
-      "accessCount": 1,
-      "lastAccessed": 1772506740158,
-      "type": "file"
-    },
-    {
-      "path": "docs/setup.md",
-      "accessCount": 1,
-      "lastAccessed": 1772506740310,
+      "lastAccessed": 1772682626674,
       "type": "file"
     }
   ],

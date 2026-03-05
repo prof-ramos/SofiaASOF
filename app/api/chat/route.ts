@@ -8,7 +8,10 @@ import { safeValidateChatRequest, toUIMessages } from '@/lib/validation/schemas'
 export const maxDuration = 30
 
 export async function POST(req: Request) {
-  // 1. Validar API key
+  // 1. Iniciar parsing imediatamente (paralelo à validação)
+  const parsePromise = req.json()
+
+  // 2. Validar API key
   if (!process.env.OPENAI_API_KEY) {
     return new Response(
       JSON.stringify({ error: 'Configuração do Servidor Incompleta: OPENAI_API_KEY ausente.' }),
@@ -16,10 +19,10 @@ export async function POST(req: Request) {
     )
   }
 
-  // 2. Parse e validar corpo da requisição
+  // 3. Parse e validar corpo da requisição
   let requestBody: unknown
   try {
-    requestBody = await req.json()
+    requestBody = await parsePromise
   } catch (parseError) {
     return new Response(
       JSON.stringify({
@@ -58,20 +61,26 @@ export async function POST(req: Request) {
 
   // Extrair texto da última mensagem do usuário para busca RAG
   const lastUserMessage = [...uiMessages].reverse().find((m) => m.role === 'user')
-  let contextPrompt = ''
 
-  if (lastUserMessage) {
-    const text = lastUserMessage.parts
-      .filter((p): p is TextUIPart => p.type === 'text')
-      .map((p) => p.text)
-      .join(' ')
+  // Paralelizar RAG e conversão de mensagens com graceful degradation
+  const ragPromise = lastUserMessage
+    ? retrieveContext(
+        lastUserMessage.parts
+          .filter((p): p is TextUIPart => p.type === 'text')
+          .map((p) => p.text)
+          .join(' ')
+      ).catch((error) => {
+        console.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
+        return [] // Degradação graciosa - retorna vazio em caso de erro
+      })
+    : Promise.resolve([])
 
-    const sources = await retrieveContext(text)
-    contextPrompt = buildContextPrompt(sources)
-  }
+  const [modelMessages, sources] = await Promise.all([
+    convertToModelMessages(uiMessages),
+    ragPromise
+  ])
 
-  // Converter UIMessages para ModelMessages (formato esperado pelo LLM)
-  const modelMessages = await convertToModelMessages(uiMessages)
+  const contextPrompt = lastUserMessage ? buildContextPrompt(sources) : ''
 
   const result = streamText({
     model: openai('gpt-4o'),

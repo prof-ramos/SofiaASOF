@@ -10,8 +10,14 @@ import { WelcomeScreen } from './WelcomeScreen'
 import { Scale, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
+// Hoist static I/O - transport config constant at module scope
+const TRANSPORT_CONFIG = { api: '/api/chat' } as const
+
 export const ChatInterface = memo(function ChatInterface() {
-  const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), [])
+  const transport = useMemo(
+    () => new DefaultChatTransport(TRANSPORT_CONFIG),
+    [] // Empty deps - config is constant
+  )
 
   const { messages, sendMessage, status, setMessages, error, regenerate } = useChat({
     transport,

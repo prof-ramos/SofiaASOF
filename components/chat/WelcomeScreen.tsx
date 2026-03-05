@@ -12,6 +12,18 @@ const SUGGESTED_QUESTIONS = [
   'Quais são os direitos previstos no RJU aplicáveis à carreira?',
 ] as const
 
+// Module-scoped flag to prevent redundant imports
+let markdownPreloaded = false
+
+// DRY: Função reutilizável para preload de markdown
+const preloadMarkdown = () => {
+  if (!markdownPreloaded) {
+    import('react-markdown')
+    import('remark-gfm')
+    markdownPreloaded = true
+  }
+}
+
 // Hoist static JSX elements
 const LOGO_ICON = (
   <div className="h-20 w-20 rounded-full bg-emerald-700 flex items-center justify-center shadow-lg">
@@ -59,7 +71,9 @@ export const WelcomeScreen = memo(function WelcomeScreen({ onSelectQuestion }: W
             <button
               key={i}
               onClick={() => onSelectQuestion(question)}
-              className="text-left px-4 py-3 text-sm rounded-xl border bg-card hover:bg-accent hover:border-emerald-300 transition-colors text-muted-foreground hover:text-foreground"
+              onMouseEnter={preloadMarkdown}
+              onFocus={preloadMarkdown}
+              className="text-left px-4 py-3 text-sm rounded-xl border bg-card hover:bg-accent hover:border-emerald-300 transition-colors text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-emerald-300 focus:outline-none"
             >
               {question}
             </button>
