@@ -39,7 +39,7 @@ export async function retrieveContext(
   try {
     const embedding = await generateEmbedding(query)
 
-    const { data, error } = await supabase.rpc('match_documents', {
+    const { data, error } = await supabase.rpc('sofia_match_documents', {
       query_embedding: embedding,
       match_threshold: matchThreshold,
       match_count: matchCount,

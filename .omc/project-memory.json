@@ -261,6 +261,12 @@
       "type": "file"
     },
     {
+      "path": "app/api/chat/route.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772683397696,
+      "type": "file"
+    },
+    {
       "path": "docs/AGENTS.md",
       "accessCount": 2,
       "lastAccessed": 1772681571103,
@@ -288,12 +294,6 @@
       "path": "AGENTS.md",
       "accessCount": 2,
       "lastAccessed": 1772681589695,
-      "type": "file"
-    },
-    {
-      "path": "app/api/chat/route.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772681592784,
       "type": "file"
     },
     {
