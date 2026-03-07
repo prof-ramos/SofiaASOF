@@ -1,6 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# ==============================================================================
+# DEPENDENCIES
+# ==============================================================================
 /node_modules
 /.pnp
 .pnp.*
@@ -9,47 +9,177 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnpm-debug.log*
 
-# testing
-/coverage
-
-# next.js
+# ==============================================================================
+# NEXT.JS (v16)
+# ==============================================================================
 /.next/
 /out/
+/.next-turbo/
+.next/
 
-# production
+# ==============================================================================
+# PRODUCTION BUILD
+# ==============================================================================
 /build
+/dist
 
-# misc
+# ==============================================================================
+# TESTING
+# ==============================================================================
+/coverage
+.nyc_output
+/test-results
+/vitest-stats
+
+# ==============================================================================
+# ENVIRONMENT FILES
+# ==============================================================================
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+# .env.local.example é versionado intencionalmente
+.env.example
+
+# ==============================================================================
+# TYPESCRIPT
+# ==============================================================================
+*.tsbuildinfo
+next-env.d.ts
+*.d.ts.ts
+*.ts.ts
+
+# ==============================================================================
+# IDES & EDITORS
+# ==============================================================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# macOS
 .DS_Store
-*.pem
+.AppleDouble
+.LSOverride
+Icon
+._*
 
-# debug
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==============================================================================
+# DEBUG & LOGS
+# ==============================================================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+logs/
+*.log.gz
 
-# env files
-.env
-.env.local
-.env.*.local
-# .env.local.example é versionado intencionalmente
+# ==============================================================================
+# OS & TEMP FILES
+# ==============================================================================
+*.pem
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.stylelintcache
+.prettierignore
 
-# Documentos da base de conhecimento (sensíveis / peso)
+# ==============================================================================
+# DATABASE (Supabase local)
+# ==============================================================================
+supabase/.branches
+supabase/.temp
+supabase/logs
+supabase/.env.local
+supabase/config.toml.local
+
+# ==============================================================================
+# BACKUP & TEMP FILES
+# ==============================================================================
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+.~*
+\#*\#
+
+# ==============================================================================
+# VERCEL & DEPLOYMENT
+# ==============================================================================
+.vercel
+.vercel_backup
+.dist ZIP
+
+# ==============================================================================
+# DOCUMENTOS (sensíveis / peso)
+# ==============================================================================
 /docs/*.txt
 /docs/*.pdf
 /docs/*.docx
+/docs/*.doc
 !/docs/.gitkeep
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# OMC State and generated reports
+# ==============================================================================
+# OMC STATE & GENERATED REPORTS
+# ==============================================================================
 /repomix-output.xml
 .omc/state/
-.env*.local
+.omc/logs/
+
+# ==============================================================================
+# MISC SECURITY
+# ==============================================================================
+*.pem
+*.key
+*.crt
+*.cer
+credentials.json
+.secrets
+.env.keys
