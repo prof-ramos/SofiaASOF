@@ -41,15 +41,15 @@ export default function MetricsDashboard() {
     setLoading(true)
     try {
       const [statsRes, dashboardRes] = await Promise.all([
-        fetch(`/api/metrics?period=${period}&view=stats`),
-        fetch(`/api/metrics?period=${period}&view=dashboard`)
+        fetch(`/api/metrics/stats?period=${period}`),
+        fetch(`/api/metrics/dashboard?period=${period}`)
       ])
-      
+
       if (statsRes.ok) {
         const statsData = await statsRes.json()
         setStats(statsData.data)
       }
-      
+
       if (dashboardRes.ok) {
         const dashboardData = await dashboardRes.json()
         setDailyMetrics(dashboardData.data || [])

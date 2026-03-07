@@ -105,7 +105,7 @@ export async function retrieveContextBatch(
           return { data: [], error: null }
         }
         try {
-          const result = await supabase.rpc('match_documents', {
+          const result = await supabase.rpc('sofia_match_documents', {
             query_embedding: embedding,
             match_threshold: matchThreshold,
             match_count: matchCount,

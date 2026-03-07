@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1772678517456,
+  "lastScanned": 1772847706260,
   "projectRoot": ".",
   "techStack": {
     "languages": [
@@ -43,20 +43,24 @@
         "category": "testing"
       }
     ],
-    "packageManager": "npm",
+    "packageManager": "pnpm",
     "runtime": null
   },
   "build": {
-    "buildCommand": "npm run build",
+    "buildCommand": "pnpm build",
     "testCommand": null,
-    "lintCommand": "npm run lint",
-    "devCommand": "npm run dev",
+    "lintCommand": "pnpm lint",
+    "devCommand": "pnpm dev",
     "scripts": {
       "dev": "next dev",
       "build": "next build",
       "start": "next start",
       "lint": "eslint",
       "ingest": "tsx scripts/ingest.ts",
+      "migrate": "tsx scripts/run-migration.ts",
+      "validate": "tsx scripts/validate-metrics.ts",
+      "test:metrics": "tsx scripts/test-metrics-sdk.ts",
+      "setup:metrics": "tsx scripts/setup-metrics-sdk.ts",
       "db:push": "supabase db push",
       "db:status": "supabase migration list",
       "deploy:prev": "vercel",
@@ -91,9 +95,10 @@
     "app": {
       "path": "app",
       "purpose": "Application code",
-      "fileCount": 4,
-      "lastAccessed": 1772678517442,
+      "fileCount": 5,
+      "lastAccessed": 1772847706246,
       "keyFiles": [
+        "AGENTS.md",
         "favicon.ico",
         "globals.css",
         "layout.tsx",
@@ -103,40 +108,43 @@
     "components": {
       "path": "components",
       "purpose": "UI components",
-      "fileCount": 0,
-      "lastAccessed": 1772678517443,
-      "keyFiles": []
+      "fileCount": 1,
+      "lastAccessed": 1772847706246,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
     },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 5,
-      "lastAccessed": 1772678517443,
+      "fileCount": 8,
+      "lastAccessed": 1772847706246,
       "keyFiles": [
+        "AGENTS.md",
+        "README.md",
         "api-reference.md",
         "architecture.md",
-        "knowledge-base.md",
-        "setup.md"
+        "knowledge-base.md"
       ]
     },
     "lib": {
       "path": "lib",
       "purpose": "Library code",
-      "fileCount": 5,
-      "lastAccessed": 1772678517449,
+      "fileCount": 8,
+      "lastAccessed": 1772847706247,
       "keyFiles": [
+        "AGENTS.md",
+        "metrics-middleware.ts",
+        "metrics.ts",
         "rag.ts",
-        "rate-limit.ts",
-        "supabase.ts",
-        "system-prompt.ts",
-        "utils.ts"
+        "rate-limit.ts"
       ]
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1772678517449,
+      "lastAccessed": 1772847706255,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -148,27 +156,34 @@
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 2,
-      "lastAccessed": 1772678517450,
+      "fileCount": 11,
+      "lastAccessed": 1772847706255,
       "keyFiles": [
+        "apply-metrics-schema.ts",
+        "convert_docs.py",
+        "convert_pdfs.py",
         "ingest.ts",
-        "setup.sh"
+        "quick-setup.ts"
       ]
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1772678517450,
+      "fileCount": 6,
+      "lastAccessed": 1772847706255,
       "keyFiles": [
-        "schema.sql"
+        "AGENTS.md",
+        "create-metrics-table.sql",
+        "metrics-schema.sql",
+        "schema.sql",
+        "setup-sofia-project.sql"
       ]
     },
     "types": {
       "path": "types",
       "purpose": "Type definitions",
       "fileCount": 1,
-      "lastAccessed": 1772678517450,
+      "lastAccessed": 1772847706255,
       "keyFiles": [
         "index.ts"
       ]
@@ -177,14 +192,14 @@
       "path": "app/api",
       "purpose": "API routes",
       "fileCount": 0,
-      "lastAccessed": 1772678517450,
+      "lastAccessed": 1772847706256,
       "keyFiles": []
     },
     "lib/__tests__": {
       "path": "lib/__tests__",
       "purpose": "Test files",
       "fileCount": 1,
-      "lastAccessed": 1772678517451,
+      "lastAccessed": 1772847706256,
       "keyFiles": [
         "rag.test.ts"
       ]
@@ -193,7 +208,7 @@
       "path": "supabase/migrations",
       "purpose": "Database migrations",
       "fileCount": 1,
-      "lastAccessed": 1772678517452,
+      "lastAccessed": 1772847706257,
       "keyFiles": [
         "20260303000000_initial.sql"
       ]
@@ -201,123 +216,105 @@
   },
   "hotPaths": [
     {
+      "path": "lib/__tests__/rag.test.ts",
+      "accessCount": 9,
+      "lastAccessed": 1772849124702,
+      "type": "file"
+    },
+    {
       "path": "lib/rag.ts",
-      "accessCount": 16,
-      "lastAccessed": 1772682564437,
-      "type": "file"
-    },
-    {
-      "path": "app/test-connection/page.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1772682558040,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/WelcomeScreen.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1772682583491,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/MarkdownRenderer.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1772682632791,
-      "type": "file"
-    },
-    {
-      "path": "app/page.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1772682587875,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 7,
-      "lastAccessed": 1772682611623,
-      "type": "file"
-    },
-    {
-      "path": "components/AGENTS.md",
-      "accessCount": 6,
-      "lastAccessed": 1772682611697,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/MessageItem.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1772681269569,
-      "type": "file"
-    },
-    {
-      "path": "app/api/chat/AGENTS.md",
-      "accessCount": 5,
-      "lastAccessed": 1772682597870,
-      "type": "file"
-    },
-    {
-      "path": "components/ui/AGENTS.md",
-      "accessCount": 4,
-      "lastAccessed": 1772682583777,
+      "accessCount": 3,
+      "lastAccessed": 1772849096549,
       "type": "file"
     },
     {
       "path": "app/api/chat/route.ts",
       "accessCount": 3,
-      "lastAccessed": 1772683397696,
+      "lastAccessed": 1772849128894,
       "type": "file"
     },
     {
-      "path": "docs/AGENTS.md",
+      "path": "app/api/metrics/route.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772849135126,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/MessageList.tsx",
       "accessCount": 2,
-      "lastAccessed": 1772681571103,
+      "lastAccessed": 1772848908680,
       "type": "file"
     },
     {
-      "path": "app/AGENTS.md",
-      "accessCount": 2,
-      "lastAccessed": 1772681574578,
-      "type": "file"
-    },
-    {
-      "path": "supabase/AGENTS.md",
-      "accessCount": 2,
-      "lastAccessed": 1772681575510,
-      "type": "file"
-    },
-    {
-      "path": "lib/AGENTS.md",
-      "accessCount": 2,
-      "lastAccessed": 1772681578976,
-      "type": "file"
-    },
-    {
-      "path": "AGENTS.md",
-      "accessCount": 2,
-      "lastAccessed": 1772681589695,
-      "type": "file"
-    },
-    {
-      "path": "app/layout.tsx",
+      "path": "docs/setup.md",
       "accessCount": 1,
-      "lastAccessed": 1772681581764,
+      "lastAccessed": 1772847726471,
       "type": "file"
     },
     {
-      "path": "lib/validation/AGENTS.md",
+      "path": "PRD.md",
       "accessCount": 1,
-      "lastAccessed": 1772681817430,
+      "lastAccessed": 1772847726481,
       "type": "file"
     },
     {
-      "path": "components/chat/AGENTS.md",
+      "path": "package.json",
       "accessCount": 1,
-      "lastAccessed": 1772681830435,
+      "lastAccessed": 1772847733358,
       "type": "file"
     },
     {
-      "path": "vitest.config.ts",
+      "path": "app/page.tsx",
       "accessCount": 1,
-      "lastAccessed": 1772682626674,
+      "lastAccessed": 1772847737935,
+      "type": "file"
+    },
+    {
+      "path": "lib/system-prompt.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772847737965,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260303000000_initial.sql",
+      "accessCount": 1,
+      "lastAccessed": 1772847741824,
+      "type": "file"
+    },
+    {
+      "path": "lib/supabase.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772847741852,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/ChatInterface.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772847741903,
+      "type": "file"
+    },
+    {
+      "path": "lib/validation/schemas.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772847741926,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1772847746090,
+      "type": "file"
+    },
+    {
+      "path": "app/api/metrics/dashboard/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772848932200,
+      "type": "file"
+    },
+    {
+      "path": "app/api/metrics/stats/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772848932238,
       "type": "file"
     }
   ],

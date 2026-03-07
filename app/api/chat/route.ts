@@ -63,11 +63,15 @@ export async function POST(req: Request) {
     )
   }
 
+  // 2.5 Inicializar cliente OpenAI (sincrono, bloqueio zero)
+  // NOTA: createOpenAI() é da Vercel AI SDK, difere de new OpenAI() do SDK nativo
+  const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
   // 3. Parse e validar corpo da requisição
   let requestBody: unknown
   try {
     requestBody = await parsePromise
-  } catch (parseError) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: 'JSON inválido',
@@ -99,9 +103,6 @@ export async function POST(req: Request) {
 
   // 4. Converter mensagens validadas para UIMessage[]
   const uiMessages = toUIMessages(messages)
-
-  // 5. Inicializar cliente OpenAI
-  const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
   // Extrair texto da última mensagem do usuário para busca RAG
   const lastUserMessage = [...uiMessages].reverse().find((m) => m.role === 'user')

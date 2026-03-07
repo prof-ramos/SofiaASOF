@@ -29,6 +29,29 @@ const TYPING_INDICATOR = (
   </div>
 )
 
+// Wrapper para content-visibility optimization
+const MessageItemWrapper = memo(function MessageItemWrapper({
+  message,
+  isLoading
+}: {
+  message: UIMessage
+  isLoading?: boolean
+}) {
+  return (
+    <div
+      className="message-item"
+      style={{
+        containIntrinsicSize: '200px',
+        // 'auto' permite pular renderizacao fora da viewport
+        // 'visible' durante loading para evitar flicker
+        contentVisibility: isLoading ? 'visible' : 'auto'
+      }}
+    >
+      <MessageItem message={message} />
+    </div>
+  )
+})
+
 export const MessageList = memo(function MessageList({ messages, isLoading }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -40,7 +63,7 @@ export const MessageList = memo(function MessageList({ messages, isLoading }: Me
     <ScrollArea className="flex-1 overflow-y-auto">
       <div className="flex flex-col py-2 min-h-full">
         {messages.map(message => (
-          <MessageItem key={message.id} message={message} />
+          <MessageItemWrapper key={message.id} message={message} isLoading={isLoading} />
         ))}
 
         {/* Indicador de digitação */}
