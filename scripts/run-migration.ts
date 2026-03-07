@@ -171,7 +171,9 @@ $$;
 
 // ── Migration Tracker ───────────────────────────────────────────────────────
 
-async function ensureMigrationsTable(client: any) {
+import { PoolClient } from 'pg'
+
+async function ensureMigrationsTable(client: PoolClient) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS sofia_migrations (
       id SERIAL PRIMARY KEY,
@@ -181,7 +183,7 @@ async function ensureMigrationsTable(client: any) {
   `)
 }
 
-async function isMigrationExecuted(client: any, name: string): Promise<boolean> {
+async function isMigrationExecuted(client: PoolClient, name: string): Promise<boolean> {
   const result = await client.query(
     'SELECT 1 FROM sofia_migrations WHERE name = $1',
     [name]
@@ -189,7 +191,7 @@ async function isMigrationExecuted(client: any, name: string): Promise<boolean> 
   return result.rows.length > 0
 }
 
-async function markMigrationExecuted(client: any, name: string) {
+async function markMigrationExecuted(client: PoolClient, name: string) {
   await client.query(
     'INSERT INTO sofia_migrations (name) VALUES ($1)',
     [name]
@@ -228,8 +230,9 @@ async function runMigrations() {
         await markMigrationExecuted(client, migration.name)
         console.log(`  ✅ ${migration.name}`)
         executed++
-      } catch (error: any) {
-        console.log(`  ❌ ${migration.name}: ${error.message}`)
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        console.log(`  ❌ ${migration.name}: ${errorMessage}`)
         throw error
       }
     }
@@ -252,8 +255,9 @@ async function main() {
   try {
     await runMigrations()
     process.exit(0)
-  } catch (error: any) {
-    console.error('\n❌ Migration failed:', error.message)
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('\n❌ Migration failed:', errorMessage)
     console.error('\n💡 Make sure SUPABASE_DB_URL is set with your database connection string')
     console.error('   Format: postgresql://postgres.[ref]:[password]@aws-0-us-east-1.pooler.supabase.com:5432/postgres')
     process.exit(1)

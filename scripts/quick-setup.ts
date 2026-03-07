@@ -113,8 +113,8 @@ async function runMigration() {
     client.release()
     console.log('✅ Migration executada com sucesso!\n')
     return true
-  } catch (error: any) {
-    console.error('❌ Erro:', error.message)
+  } catch (error: unknown) {
+    console.error('❌ Erro:', error instanceof Error ? error.message : String(error))
     return false
   } finally {
     await pool.end()

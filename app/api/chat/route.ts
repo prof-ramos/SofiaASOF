@@ -1,7 +1,9 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages } from 'ai'
 import type { TextUIPart } from 'ai'
-import { retrieveContext, buildContextPrompt } from '@/lib/rag'
+import { retrieveContext } from '@/lib/rag'
+import { rerankSources } from '@/lib/rag-rerank'
+import { buildDynamicContextPrompt } from '@/lib/context-optimizer'
 import { SOFIA_SYSTEM_PROMPT } from '@/lib/system-prompt'
 import { safeValidateChatRequest, toUIMessages } from '@/lib/validation/schemas'
 import { rateLimit } from '@/lib/rate-limit'
@@ -109,16 +111,28 @@ export async function POST(req: Request) {
   const lastUserMessage = [...uiMessages].reverse().find((m) => m.role === 'user')
 
   // Paralelizar RAG e conversão de mensagens com graceful degradation
-  const ragPromise = lastUserMessage
-    ? retrieveContext(
-        lastUserMessage.parts
-          .filter((p): p is TextUIPart => p.type === 'text')
-          .map((p) => p.text)
-          .join(' ')
-      ).catch((error) => {
-        logger.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
-        return [] // Degradação graciosa - retorna vazio em caso de erro
-      })
+  const queryText = lastUserMessage
+    ? lastUserMessage.parts
+        .filter((p): p is TextUIPart => p.type === 'text')
+        .map((p) => p.text)
+        .join(' ')
+    : ''
+
+  const ragPromise = queryText
+    ? retrieveContext(queryText, 0.7, 8)  // Threshold aumentado de 0.5 para 0.7, mais chunks (8 em vez de 5)
+        .then(async (sources) => {
+          // Re-ranking para melhorar precisão
+          if (sources.length > 1) {
+            const queryTextForLog = queryText.substring(0, 50) + (queryText.length > 50 ? '...' : '')
+            logger.log(`[RAG PIPELINE]: Retrieved ${sources.length} chunks, re-ranking...`)
+            return await rerankSources(queryTextForLog, sources)
+          }
+          return sources
+        })
+        .catch((error) => {
+          logger.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
+          return [] // Degradação graciosa - retorna vazio em caso de erro
+        })
     : Promise.resolve([])
 
   const [modelMessages, sources] = await Promise.all([
@@ -126,7 +140,15 @@ export async function POST(req: Request) {
     ragPromise
   ])
 
-  const contextPrompt = lastUserMessage ? buildContextPrompt(sources) : ''
+  // Otimizar contexto dinamicamente (reduz custos mantendo qualidade)
+  const contextPrompt = lastUserMessage
+    ? buildDynamicContextPrompt(sources, {
+        maxContextTokens: 2000,  // Limite dinâmico
+        minChunks: 3,            // Garantir mínimo de contexto
+        maxChunks: 5,            // Não exceder top 5
+        diversityThreshold: 2   // Máximo 2 chunks do mesmo doc
+      })
+    : ''
 
   const result = streamText({
     model: openai('gpt-4o'),

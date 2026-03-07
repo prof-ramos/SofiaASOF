@@ -67,7 +67,7 @@ export async function finalizeMetrics(
   ctx: MetricsContext,
   response: string,
   model: string = 'gpt-4o-mini',
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   const completionTokens = countTokens(response)
   

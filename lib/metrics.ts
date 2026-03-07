@@ -44,7 +44,7 @@ export interface MessageMetrics {
   chunksRetrieved?: number
   ragSources?: string[]
   model?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface SessionStats {
@@ -100,11 +100,10 @@ export async function logMessageMetrics(metrics: MessageMetrics): Promise<string
   try {
     const model = metrics.model || 'gpt-4o-mini'
     const pricing = MODEL_PRICING[model] || MODEL_PRICING['gpt-4o-mini']
-    
+
     const promptCost = (metrics.promptTokens / 1_000_000) * pricing.input
     const completionCost = (metrics.completionTokens / 1_000_000) * pricing.output
-    const totalCost = promptCost + completionCost
-    
+
     const { data, error } = await supabase.rpc('sofia_log_message_metrics', {
       p_session_id: metrics.sessionId,
       p_message_id: metrics.messageId || null,
@@ -170,7 +169,7 @@ export async function getDashboard(days: number = 30): Promise<DailyMetrics[]> {
   }
 }
 
-export async function getRecentSessions(limit: number = 10): Promise<any[]> {
+export async function getRecentSessions(limit: number = 10): Promise<SessionStats[]> {
   try {
     const { data, error } = await supabase
       .from('sofia_chat_sessions')
