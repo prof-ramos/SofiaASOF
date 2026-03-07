@@ -222,6 +222,12 @@
       "type": "file"
     },
     {
+      "path": "components/chat/MessageList.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1772849483599,
+      "type": "file"
+    },
+    {
       "path": "lib/metrics.ts",
       "accessCount": 4,
       "lastAccessed": 1772849338645,
@@ -249,12 +255,6 @@
       "path": "app/api/metrics/route.ts",
       "accessCount": 3,
       "lastAccessed": 1772849135126,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/MessageList.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1772848908680,
       "type": "file"
     },
     {
