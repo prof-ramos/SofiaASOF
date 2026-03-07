@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDashboard } from '@/lib/metrics'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   const period = parseInt(request.nextUrl.searchParams.get('period') || '30', 10)
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
     const data = await getDashboard(period)
     return NextResponse.json({ success: true, data })
   } catch (error) {
-    console.error('Dashboard API error:', error)
+    logger.error('Dashboard API error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch dashboard' },
       { status: 500 }

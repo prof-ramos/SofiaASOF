@@ -11,6 +11,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { get_encoding, Tiktoken } from 'tiktoken'
+import { logger } from './logger'
 
 // ── Configuração ────────────────────────────────────────────────────────────
 
@@ -119,13 +120,13 @@ export async function logMessageMetrics(metrics: MessageMetrics): Promise<string
     })
     
     if (error) {
-      console.error('Error logging metrics:', error)
+      logger.error('Error logging metrics:', error)
       return null
     }
-    
+
     return data
   } catch (error) {
-    console.error('Error logging metrics:', error)
+    logger.error('Error logging metrics:', error)
     return null
   }
 }
@@ -137,15 +138,15 @@ export async function getStats(days: number = 7): Promise<SessionStats | null> {
     const { data, error } = await supabase.rpc('sofia_get_stats', {
       p_days: days
     })
-    
+
     if (error) {
-      console.error('Error getting stats:', error)
+      logger.error('Error getting stats:', error)
       return null
     }
-    
+
     return data?.[0] || null
   } catch (error) {
-    console.error('Error getting stats:', error)
+    logger.error('Error getting stats:', error)
     return null
   }
 }
@@ -156,15 +157,15 @@ export async function getDashboard(days: number = 30): Promise<DailyMetrics[]> {
       .from('sofia_dashboard')
       .select('*')
       .limit(days)
-    
+
     if (error) {
-      console.error('Error getting dashboard:', error)
+      logger.error('Error getting dashboard:', error)
       return []
     }
-    
+
     return data || []
   } catch (error) {
-    console.error('Error getting dashboard:', error)
+    logger.error('Error getting dashboard:', error)
     return []
   }
 }
@@ -176,15 +177,15 @@ export async function getRecentSessions(limit: number = 10): Promise<any[]> {
       .select('*')
       .order('last_activity', { ascending: false })
       .limit(limit)
-    
+
     if (error) {
-      console.error('Error getting sessions:', error)
+      logger.error('Error getting sessions:', error)
       return []
     }
-    
+
     return data || []
   } catch (error) {
-    console.error('Error getting sessions:', error)
+    logger.error('Error getting sessions:', error)
     return []
   }
 }
@@ -203,9 +204,9 @@ export async function checkRateLimit(
     .select('*', { count: 'exact', head: true })
     .eq('session_id', identifier)
     .gte('created_at', windowStart.toISOString())
-  
+
   if (error) {
-    console.error('Error checking rate limit:', error)
+    logger.error('Error checking rate limit:', error)
     return { allowed: true, remaining: maxRequests, resetAt: new Date(Date.now() + windowMinutes * 60 * 1000) }
   }
   

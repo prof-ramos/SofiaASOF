@@ -5,6 +5,7 @@ import { retrieveContext, buildContextPrompt } from '@/lib/rag'
 import { SOFIA_SYSTEM_PROMPT } from '@/lib/system-prompt'
 import { safeValidateChatRequest, toUIMessages } from '@/lib/validation/schemas'
 import { rateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 export const maxDuration = 30
 
@@ -115,7 +116,7 @@ export async function POST(req: Request) {
           .map((p) => p.text)
           .join(' ')
       ).catch((error) => {
-        console.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
+        logger.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
         return [] // Degradação graciosa - retorna vazio em caso de erro
       })
     : Promise.resolve([])

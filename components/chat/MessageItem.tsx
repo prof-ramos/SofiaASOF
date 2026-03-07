@@ -1,6 +1,6 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import type { UIMessage } from 'ai'
@@ -22,15 +22,14 @@ interface MessageItemProps {
   message: UIMessage
 }
 
-function getTextContent(message: UIMessage): string {
-  return message.parts
-    .filter((p) => p.type === 'text')
-    .map((p) => (p as { type: 'text'; text: string }).text)
-    .join('')
-}
-
 export const MessageItem = memo(function MessageItem({ message }: MessageItemProps) {
-  const text = getTextContent(message)
+  const text = useMemo(
+    () => message.parts
+      .filter((p) => p.type === 'text')
+      .map((p) => (p as { type: 'text'; text: string }).text)
+      .join(''),
+    [message.parts]
+  )
 
   if (!text) return null
 

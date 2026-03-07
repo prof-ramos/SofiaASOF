@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStats } from '@/lib/metrics'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   const period = parseInt(request.nextUrl.searchParams.get('period') || '7', 10)
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
       data,
     })
   } catch (error) {
-    console.error('Stats API error:', error)
+    logger.error('Stats API error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch stats' },
       { status: 500 }

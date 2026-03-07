@@ -216,6 +216,36 @@
   },
   "hotPaths": [
     {
+      "path": "lib/rag.ts",
+      "accessCount": 21,
+      "lastAccessed": 1772851110449,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/ChatInterface.tsx",
+      "accessCount": 16,
+      "lastAccessed": 1772851032373,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 14,
+      "lastAccessed": 1772850233168,
+      "type": "directory"
+    },
+    {
+      "path": "lib/metrics.ts",
+      "accessCount": 14,
+      "lastAccessed": 1772851092463,
+      "type": "file"
+    },
+    {
+      "path": "app/api/chat/route.ts",
+      "accessCount": 10,
+      "lastAccessed": 1772850495029,
+      "type": "file"
+    },
+    {
       "path": "lib/__tests__/rag.test.ts",
       "accessCount": 9,
       "lastAccessed": 1772849124702,
@@ -223,14 +253,32 @@
     },
     {
       "path": "components/chat/MessageList.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1772849483599,
+      "accessCount": 7,
+      "lastAccessed": 1772850009094,
       "type": "file"
     },
     {
-      "path": "lib/metrics.ts",
-      "accessCount": 4,
-      "lastAccessed": 1772849338645,
+      "path": "components/chat/MessageItem.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772850469712,
+      "type": "file"
+    },
+    {
+      "path": "app/page.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772850622552,
+      "type": "file"
+    },
+    {
+      "path": "components/ErrorBoundary.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772851032374,
+      "type": "file"
+    },
+    {
+      "path": "app/metrics/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1772851110696,
       "type": "file"
     },
     {
@@ -240,15 +288,9 @@
       "type": "file"
     },
     {
-      "path": "lib/rag.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772849096549,
-      "type": "file"
-    },
-    {
-      "path": "app/api/chat/route.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772849128894,
+      "path": "app/api/metrics/dashboard/route.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772851091995,
       "type": "file"
     },
     {
@@ -258,9 +300,27 @@
       "type": "file"
     },
     {
-      "path": "app/api/metrics/dashboard/route.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772849231322,
+      "path": "package.json",
+      "accessCount": 3,
+      "lastAccessed": 1772850125099,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/ChatInput.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1772850227968,
+      "type": "file"
+    },
+    {
+      "path": "app/globals.css",
+      "accessCount": 3,
+      "lastAccessed": 1772850235872,
+      "type": "file"
+    },
+    {
+      "path": "app/api/metrics/stats/route.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772851091761,
       "type": "file"
     },
     {
@@ -276,6 +336,30 @@
       "type": "file"
     },
     {
+      "path": "lib/system-prompt.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772850015422,
+      "type": "file"
+    },
+    {
+      "path": "lib/supabase.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772850015467,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/WelcomeScreen.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772850129180,
+      "type": "file"
+    },
+    {
+      "path": "lib/logger.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772850500622,
+      "type": "file"
+    },
+    {
       "path": "docs/setup.md",
       "accessCount": 1,
       "lastAccessed": 1772847726471,
@@ -288,39 +372,9 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 1,
-      "lastAccessed": 1772847733358,
-      "type": "file"
-    },
-    {
-      "path": "app/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772847737935,
-      "type": "file"
-    },
-    {
-      "path": "lib/system-prompt.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772847737965,
-      "type": "file"
-    },
-    {
       "path": "supabase/migrations/20260303000000_initial.sql",
       "accessCount": 1,
       "lastAccessed": 1772847741824,
-      "type": "file"
-    },
-    {
-      "path": "lib/supabase.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772847741852,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/ChatInterface.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772847741903,
       "type": "file"
     },
     {
@@ -336,21 +390,87 @@
       "type": "file"
     },
     {
-      "path": "app/api/metrics/stats/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772848932238,
-      "type": "file"
-    },
-    {
-      "path": "app/metrics/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772849287915,
-      "type": "file"
-    },
-    {
       "path": "components/ui/card.tsx",
       "accessCount": 1,
       "lastAccessed": 1772849300653,
+      "type": "file"
+    },
+    {
+      "path": "app/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850009112,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/scroll-area.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850012291,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/avatar.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850012302,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/MarkdownRenderer.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850012315,
+      "type": "file"
+    },
+    {
+      "path": "lib/utils.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772850015436,
+      "type": "file"
+    },
+    {
+      "path": "components",
+      "accessCount": 1,
+      "lastAccessed": 1772850025475,
+      "type": "directory"
+    },
+    {
+      "path": "docs/VERCEL_REACT_REVIEW.md",
+      "accessCount": 1,
+      "lastAccessed": 1772850048303,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850058032,
+      "type": "file"
+    },
+    {
+      "path": "lib/rate-limit.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772850068570,
+      "type": "file"
+    },
+    {
+      "path": "middleware.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772850068578,
+      "type": "file"
+    },
+    {
+      "path": "AGENTS.md",
+      "accessCount": 1,
+      "lastAccessed": 1772850119185,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/textarea.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772850235867,
+      "type": "file"
+    },
+    {
+      "path": "app/api/metrics/sessions/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772851091525,
       "type": "file"
     }
   ],

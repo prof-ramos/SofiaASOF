@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import OpenAI from 'openai'
 import { supabase } from './supabase'
+import { logger } from './logger'
 import type { Source } from '@/types'
 
 // Cache the client initialization per request
@@ -25,7 +26,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
   try {
     return await generateEmbeddingCached(text)
   } catch (error) {
-    console.error('[EMBEDDING ERROR]:', error)
+    logger.error('[EMBEDDING ERROR]:', error)
     throw error
   }
 }
@@ -46,12 +47,12 @@ export async function retrieveContext(
     })
 
     if (error) {
-      console.error('[SUPABASE RPC ERROR]:', error)
+      logger.error('[SUPABASE RPC ERROR]:', error)
       return []
     }
 
     const duration = Date.now() - start
-    console.log(`[RAG PERFORMANCE]: Context retrieved in ${duration}ms`)
+    logger.log(`[RAG PERFORMANCE]: Context retrieved in ${duration}ms`)
 
     return (data ?? []).map(
       (row: { content: string; metadata: { title?: string }; similarity: number }) => ({
@@ -61,7 +62,7 @@ export async function retrieveContext(
       })
     )
   } catch (err) {
-    console.error('[RETRIEVE CONTEXT ERROR]:', err)
+    logger.error('[RETRIEVE CONTEXT ERROR]:', err)
     return [] // Degradação graciosa
   }
 }
@@ -91,7 +92,7 @@ export async function retrieveContextBatch(
         try {
           return await generateEmbedding(query)
         } catch (error) {
-          console.error(`[EMBEDDING ERROR for query "${query}"]:`, error)
+          logger.error(`[EMBEDDING ERROR for query "${query}"]:`, error)
           return null // Marca como falha para este query
         }
       })
@@ -111,12 +112,12 @@ export async function retrieveContextBatch(
             match_count: matchCount,
           })
           if (result.error) {
-            console.error(`[SUPABASE RPC ERROR for query "${queries[index]}"]:`, result.error)
+            logger.error(`[SUPABASE RPC ERROR for query "${queries[index]}"]:`, result.error)
             return { data: [], error: null }
           }
           return result
         } catch (error) {
-          console.error(`[SUPABASE RPC ERROR for query "${queries[index]}"]:`, error)
+          logger.error(`[SUPABASE RPC ERROR for query "${queries[index]}"]:`, error)
           return { data: [], error: null } // Degradação graciosa
         }
       })
@@ -144,11 +145,11 @@ export async function retrieveContextBatch(
     })
 
     const duration = Date.now() - start
-    console.log(`[RAG PERFORMANCE]: Batch context retrieved in ${duration}ms (${queries.length} queries)`)
+    logger.log(`[RAG PERFORMANCE]: Batch context retrieved in ${duration}ms (${queries.length} queries)`)
 
     return resultMap
   } catch (error) {
-    console.error('[BATCH RETRIEVE CONTEXT ERROR]:', error)
+    logger.error('[BATCH RETRIEVE CONTEXT ERROR]:', error)
     // Retorna Map vazio com todas as queries mapeadas para arrays vazios
     return new Map(queries.map(q => [q, []]))
   }

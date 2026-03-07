@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { logger } from '@/lib/logger'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface Stats {
@@ -55,7 +56,7 @@ export default function MetricsDashboard() {
         setDailyMetrics(dashboardData.data || [])
       }
     } catch (error) {
-      console.error('Error fetching metrics:', error)
+      logger.error('Error fetching metrics:', error)
     } finally {
       setLoading(false)
     }

@@ -2,13 +2,14 @@
 
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
-import { useState, useMemo, type FormEvent, memo } from 'react'
+import { useState, useMemo, useCallback, type FormEvent, memo } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { MessageList } from './MessageList'
 import { ChatInput } from './ChatInput'
 import { WelcomeScreen } from './WelcomeScreen'
 import { Scale, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { logger } from '@/lib/logger'
 
 // Hoist static I/O - transport config constant at module scope
 const TRANSPORT_CONFIG = { api: '/api/chat' } as const
@@ -22,7 +23,7 @@ export const ChatInterface = memo(function ChatInterface() {
   const { messages, sendMessage, status, setMessages, error, regenerate } = useChat({
     transport,
     onError: (err) => {
-      console.error('[CHAT INTERFACE ERROR]:', err)
+      logger.error('[CHAT INTERFACE ERROR]:', err)
     },
   })
 
@@ -46,10 +47,10 @@ export const ChatInterface = memo(function ChatInterface() {
     await sendMessage({ text: question })
   }
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setMessages([])
     setInput('')
-  }
+  }, [setMessages, setInput])
 
   return (
     <div className="flex flex-col h-screen bg-background">
