@@ -1,26 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { buildContextPrompt, retrieveContextBatch } from '../rag'
 import { Source } from '@/types'
-
-// Mock do supabase para evitar erro de inicialização nos testes
-const mockRpc = vi.fn()
-vi.mock('@/lib/supabase', () => ({
-  supabase: {
-    rpc: (...args: unknown[]) => mockRpc(...args),
-  },
-}))
-
-// Mock do OpenAI para evitar erro de API key (definido inline)
-vi.mock('openai', () => {
-  const mockCreate = vi.fn().mockResolvedValue({
-    data: [{ embedding: [0.1, 0.2, 0.3] }]
-  })
-  return {
-    default: class {
-      embeddings = { create: mockCreate }
-    }
-  }
-})
+import { mockRpc } from '../../test-setup'
 
 describe('RAG Utilities', () => {
   it('deve retornar string vazia se não houver fontes', () => {

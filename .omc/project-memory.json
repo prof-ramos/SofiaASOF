@@ -90,7 +90,14 @@
       "branchingStrategy": null
     }
   },
-  "customNotes": [],
+  "customNotes": [
+    {
+      "timestamp": 1772857462485,
+      "source": "manual",
+      "category": "testing",
+      "content": "Fixing integration test issues: inconsistent regex patterns, duplicate tests, and incorrect fallback test assertions in lib/__tests__/rag-integration.test.ts"
+    }
+  ],
   "directoryMap": {
     "app": {
       "path": "app",
@@ -217,38 +224,56 @@
   "hotPaths": [
     {
       "path": "lib/rag.ts",
-      "accessCount": 21,
-      "lastAccessed": 1772851110449,
-      "type": "file"
-    },
-    {
-      "path": "components/chat/ChatInterface.tsx",
-      "accessCount": 16,
-      "lastAccessed": 1772851032373,
-      "type": "file"
-    },
-    {
-      "path": "",
-      "accessCount": 14,
-      "lastAccessed": 1772850233168,
-      "type": "directory"
-    },
-    {
-      "path": "lib/metrics.ts",
-      "accessCount": 14,
-      "lastAccessed": 1772851092463,
-      "type": "file"
-    },
-    {
-      "path": "app/api/chat/route.ts",
-      "accessCount": 10,
-      "lastAccessed": 1772850495029,
+      "accessCount": 33,
+      "lastAccessed": 1772858084395,
       "type": "file"
     },
     {
       "path": "lib/__tests__/rag.test.ts",
-      "accessCount": 9,
-      "lastAccessed": 1772849124702,
+      "accessCount": 30,
+      "lastAccessed": 1772858195717,
+      "type": "file"
+    },
+    {
+      "path": "app/api/chat/route.ts",
+      "accessCount": 25,
+      "lastAccessed": 1772856850671,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 23,
+      "lastAccessed": 1772858654972,
+      "type": "directory"
+    },
+    {
+      "path": "lib/metrics.ts",
+      "accessCount": 20,
+      "lastAccessed": 1772855875422,
+      "type": "file"
+    },
+    {
+      "path": "components/chat/ChatInterface.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1772855875420,
+      "type": "file"
+    },
+    {
+      "path": "lib/rag-rerank.ts",
+      "accessCount": 15,
+      "lastAccessed": 1772857712560,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 12,
+      "lastAccessed": 1772857515711,
+      "type": "file"
+    },
+    {
+      "path": "lib/logger.ts",
+      "accessCount": 8,
+      "lastAccessed": 1772856237667,
       "type": "file"
     },
     {
@@ -276,9 +301,27 @@
       "type": "file"
     },
     {
+      "path": "next.config.ts",
+      "accessCount": 7,
+      "lastAccessed": 1772855000985,
+      "type": "file"
+    },
+    {
       "path": "app/metrics/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1772851110696,
+      "type": "file"
+    },
+    {
+      "path": "lib/metrics-middleware.ts",
+      "accessCount": 5,
+      "lastAccessed": 1772855062319,
+      "type": "file"
+    },
+    {
+      "path": "lib/supabase.ts",
+      "accessCount": 5,
+      "lastAccessed": 1772858177223,
       "type": "file"
     },
     {
@@ -300,12 +343,6 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 3,
-      "lastAccessed": 1772850125099,
-      "type": "file"
-    },
-    {
       "path": "components/chat/ChatInput.tsx",
       "accessCount": 3,
       "lastAccessed": 1772850227968,
@@ -324,15 +361,15 @@
       "type": "file"
     },
     {
-      "path": "lib/metrics-middleware.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772849316462,
+      "path": "analisecoderabbit_debug.md",
+      "accessCount": 3,
+      "lastAccessed": 1772853280873,
       "type": "file"
     },
     {
-      "path": "next.config.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772849393720,
+      "path": "lib/rate-limit.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772855872139,
       "type": "file"
     },
     {
@@ -342,21 +379,21 @@
       "type": "file"
     },
     {
-      "path": "lib/supabase.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772850015467,
-      "type": "file"
-    },
-    {
       "path": "components/chat/WelcomeScreen.tsx",
       "accessCount": 2,
       "lastAccessed": 1772850129180,
       "type": "file"
     },
     {
-      "path": "lib/logger.ts",
+      "path": "lib/validation/schemas.ts",
       "accessCount": 2,
-      "lastAccessed": 1772850500622,
+      "lastAccessed": 1772854484138,
+      "type": "file"
+    },
+    {
+      "path": "lib/rate-limit-supabase.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772855872150,
       "type": "file"
     },
     {
@@ -375,12 +412,6 @@
       "path": "supabase/migrations/20260303000000_initial.sql",
       "accessCount": 1,
       "lastAccessed": 1772847741824,
-      "type": "file"
-    },
-    {
-      "path": "lib/validation/schemas.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772847741926,
       "type": "file"
     },
     {
@@ -444,12 +475,6 @@
       "type": "file"
     },
     {
-      "path": "lib/rate-limit.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772850068570,
-      "type": "file"
-    },
-    {
       "path": "middleware.ts",
       "accessCount": 1,
       "lastAccessed": 1772850068578,
@@ -471,6 +496,30 @@
       "path": "app/api/metrics/sessions/route.ts",
       "accessCount": 1,
       "lastAccessed": 1772851091525,
+      "type": "file"
+    },
+    {
+      "path": ".claude/agents/ai-engineer.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854442975,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260307000001_rate_limiting.sql",
+      "accessCount": 1,
+      "lastAccessed": 1772854686630,
+      "type": "file"
+    },
+    {
+      "path": "scripts/apply-rate-limiting-migration.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772854715194,
+      "type": "file"
+    },
+    {
+      "path": "RATE_LIMITING_SETUP.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854725074,
       "type": "file"
     }
   ],
