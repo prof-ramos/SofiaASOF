@@ -1,6 +1,6 @@
 /**
  * SOFIA Metrics System
- * 
+ *
  * Sistema completo de métricas com:
  * - Contagem de tokens (tiktoken)
  * - Latência de RAG e LLM
@@ -8,8 +8,9 @@
  * - Persistência no Supabase
  */
 
+import 'server-only'
 import { createClient } from '@supabase/supabase-js'
-import { encoding_for_encoding, TiktokenEncoding } from 'tiktoken'
+import { get_encoding, Tiktoken } from 'tiktoken'
 
 // ── Configuração ────────────────────────────────────────────────────────────
 
@@ -66,11 +67,11 @@ export interface DailyMetrics {
 
 // ── Token Counter ────────────────────────────────────────────────────────────
 
-let encoder: ReturnType<typeof encoding_for_encoding> | null = null
+let encoder: Tiktoken | null = null
 
 function getEncoder() {
   if (!encoder) {
-    encoder = encoding_for_encoding('cl100k_base') // GPT-4/3.5 encoding
+    encoder = get_encoding('cl100k_base') // GPT-4/3.5 encoding
   }
   return encoder
 }

@@ -40,13 +40,12 @@ async function createTables() {
   const { data: existingTables, error: checkError } = await supabase
     .rpc('exec', {
       sql: `
-        SELECT table_name 
-        FROM information_schema.tables 
-        WHERE table_schema = 'public' 
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
         AND table_name LIKE 'sofia_%'
       `
     })
-    .catch(() => ({ data: null, error: true }))
   
   // Create sofia_chat_sessions
   console.log('  Creating sofia_chat_sessions...')
@@ -54,17 +53,13 @@ async function createTables() {
     .from(TABLES.sessions)
     .select('id')
     .limit(1)
-    .catch(async () => {
-      // Table doesn't exist, create it via raw SQL through edge function
-      // Since we can't run DDL directly via SDK, we'll use a workaround
-      console.log('    ⚠️  Cannot create table via SDK (DDL not supported)')
-      console.log('    📝 Run this SQL manually in Supabase SQL Editor:\n')
-      console.log('    https://supabase.com/dashboard/project/hvmcawefxbkwxfkimxlh/sql\n')
-      return { error: 'DDL_NOT_SUPPORTED' }
-    })
-  
+
   if (!sessionsError) {
     console.log('    ✅ Table already exists')
+  } else {
+    console.log('    ⚠️  Cannot create table via SDK (DDL not supported)')
+    console.log('    📝 Run this SQL manually in Supabase SQL Editor:\n')
+    console.log('    https://supabase.com/dashboard/project/hvmcawefxbkwxfkimxlh/sql\n')
   }
   
   // Create sofia_message_metrics

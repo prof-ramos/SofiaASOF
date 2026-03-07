@@ -222,6 +222,18 @@
       "type": "file"
     },
     {
+      "path": "lib/metrics.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772849338645,
+      "type": "file"
+    },
+    {
+      "path": "scripts/setup-metrics-sdk.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772849374161,
+      "type": "file"
+    },
+    {
       "path": "lib/rag.ts",
       "accessCount": 3,
       "lastAccessed": 1772849096549,
@@ -243,6 +255,24 @@
       "path": "components/chat/MessageList.tsx",
       "accessCount": 2,
       "lastAccessed": 1772848908680,
+      "type": "file"
+    },
+    {
+      "path": "app/api/metrics/dashboard/route.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772849231322,
+      "type": "file"
+    },
+    {
+      "path": "lib/metrics-middleware.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772849316462,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772849393720,
       "type": "file"
     },
     {
@@ -306,15 +336,21 @@
       "type": "file"
     },
     {
-      "path": "app/api/metrics/dashboard/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772848932200,
-      "type": "file"
-    },
-    {
       "path": "app/api/metrics/stats/route.ts",
       "accessCount": 1,
       "lastAccessed": 1772848932238,
+      "type": "file"
+    },
+    {
+      "path": "app/metrics/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772849287915,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772849300653,
       "type": "file"
     }
   ],

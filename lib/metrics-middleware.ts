@@ -13,10 +13,10 @@ import { randomUUID } from 'crypto'
 export function getSessionId(request: NextRequest): string {
   // Tenta pegar do header
   let sessionId = request.headers.get('x-session-id')
-  
+
   // Tenta pegar do cookie
   if (!sessionId) {
-    sessionId = request.cookies.get('sofia_session')?.value
+    sessionId = request.cookies.get('sofia_session')?.value ?? null
   }
   
   // Gera novo se não existir
