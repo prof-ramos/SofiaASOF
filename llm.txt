@@ -1,0 +1,206 @@
+# SOFIA — Agente de IA para ASOF
+
+> SOFIA (Suporte Orientado às Funções e Interesses dos Associados) é um chatbot com RAG (Retrieval Augmented Generation) desenvolvido para a ASOF — Associação Nacional dos Oficiais de Chancelaria do Serviço Exterior Brasileiro. Orienta Oficiais de Chancelaria sobre carreira, direitos, deveres e procedimentos funcionais. Stack: Next.js 16 (App Router) + Vercel AI SDK v3 + OpenAI GPT-4o + Supabase pgvector. Deployado na Vercel (Free tier). Este projeto é desenvolvido, testado, publicado e melhorado 100% por agentes de IA (Claude Code, codex-cli).
+
+## Início Rápido
+
+- [Guia do Desenvolvedor](DEVELOPER_GUIDE.md): setup completo do ambiente, dependências, variáveis de ambiente, troubleshooting
+- [Template de variáveis de ambiente](.env.local.example): copie para `.env.local` e preencha antes de qualquer comando
+- [Referência de comandos](CLAUDE.md): todos os scripts npm, comandos de teste, ingestão e migração
+- [Setup automatizado](scripts/quick-setup.ts): `npm run setup` executa o setup completo end-to-end
+
+**Variáveis obrigatórias:**
+
+```
+OPENAI_API_KEY=sk-...
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+```
+
+**Comandos essenciais:**
+
+```bash
+npm install           # instala dependências
+npm run dev           # servidor de desenvolvimento (localhost:3000)
+npm run build         # build de produção (sempre rodar antes de deploy)
+vitest                # executa os 98 testes automatizados
+npm run ingest        # ingere documentos de /docs no Supabase
+npm run db:push       # aplica migrações do banco
+npm run setup         # setup completo automatizado
+```
+
+## Arquitetura e Design
+
+- [CLAUDE.md](CLAUDE.md): guia principal para agentes de IA — fluxo RAG, estrutura de diretórios, padrões, convenções, brand kit
+- [PRD.md](PRD.md): requisitos do produto, objetivos, público-alvo, critérios de aceitação
+- [Arquitetura técnica](docs/architecture.md): diagrama do fluxo de dados, decisões de design
+- [Base de conhecimento](docs/knowledge-base.md): descrição dos documentos jurídicos ingeridos
+- [Visão geral do projeto](README.md): introdução, features, setup rápido
+
+**Fluxo RAG resumido:**
+
+```
+Pergunta → Middleware (rate limit) → /api/chat → Embedding (text-embedding-3-small)
+→ Supabase RPC sofia_match_documents (threshold=0.7, top=8)
+→ Re-ranking heurístico → Otimização de contexto (2000 tokens, 3–5 chunks)
+→ GPT-4o streaming → Resposta
+```
+
+## Referência da API
+
+- [Documentação completa da API](API_DOCUMENTATION.md): endpoint `/api/chat`, request/response schema, códigos de erro, exemplos cURL
+- [Endpoint principal](app/api/chat/route.ts): implementação do chat com RAG e streaming
+- [Rotas de métricas](app/api/metrics/): 4 endpoints — stats, dashboard, sessions, export
+- [Schemas Zod](lib/validation/schemas.ts): validação do payload (max 50 msgs, max 10.000 chars/msg)
+
+**Endpoint único de produção:**
+
+```
+POST /api/chat
+Content-Type: application/json
+{ "messages": [{ "role": "user", "content": "sua pergunta" }] }
+```
+
+## Base de Dados (Supabase)
+
+- [Migração inicial](supabase/migrations/20260303000000_initial.sql): schema principal — extensão pgvector, tabela `sofia_documents` (VECTOR 1536, índice HNSW), RPC `sofia_match_documents`, tabela `sofia_chat_sessions`
+- [Migração rate limiting](supabase/migrations/20260307000001_rate_limiting.sql): tabela `rate_limit_entries` para persistência entre instâncias Vercel
+- [Cliente Supabase](lib/supabase.ts): dois clientes — público (anon key) e admin (service role key)
+
+**Tabelas:**
+
+| Tabela | Finalidade |
+|--------|-----------|
+| `sofia_documents` | Chunks com embeddings VECTOR(1536) + índice HNSW |
+| `sofia_chat_sessions` | Histórico de sessões (JSONB) |
+| `sofia_message_metrics` | Tokens, latência, custos estimados |
+| `sofia_dashboard` | View agregada para métricas |
+| `rate_limit_entries` | Rate limiting persistido entre instâncias |
+
+## Pipeline RAG
+
+- [Core RAG](lib/rag.ts): `generateEmbedding()`, `retrieveContext()`, `buildContextPrompt()`, `retrieveContextBatch()`
+- [Re-ranking](lib/rag-rerank.ts): `rerankSources()` — bônus por keywords, penalidade por tamanho, score por posição; stub pronto para cross-encoder (Xenova)
+- [Otimizador de contexto](lib/context-optimizer.ts): `optimizeContext()` — respeita limite de 2000 tokens, min 3 / max 5 chunks, máx 2 chunks por documento
+- [System prompt da SOFIA](lib/system-prompt.ts): personalidade, regras de citação legal, hierarquia de fontes, restrições de linguagem
+- [Métricas](lib/metrics.ts): contagem de tokens via tiktoken (cl100k_base), preços por modelo, logging no Supabase
+
+## Testes e Qualidade
+
+- [Configuração Vitest](vitest.config.ts): ambiente jsdom, path aliases, setup global
+- [Setup de testes](test-setup.ts): mocks globais do Supabase
+- [Testes RAG](lib/__tests__/rag.test.ts): pipeline principal
+- [Testes re-ranking](lib/__tests__/rag-rerank.test.ts): heurísticas de re-ranking
+- [Testes integração](lib/__tests__/rag-integration.test.ts): fluxo end-to-end
+- [Testes otimizador](lib/__tests__/context-optimizer.test.ts): contagem de tokens e seleção de chunks
+- [Fixtures](lib/__tests__/fixtures/sources.ts): mock data determinístico reutilizável
+
+**Padrão de mock obrigatório nos testes:**
+
+```typescript
+vi.mock('@/lib/supabase', () => ({
+  supabase: { rpc: vi.fn() },
+  supabaseAdmin: { rpc: vi.fn() },
+}))
+```
+
+**Comandos de teste:**
+
+```bash
+vitest                                              # todos os 98 testes
+vitest run lib/__tests__/rag.test.ts                # testes RAG apenas
+vitest run lib/__tests__/rag-rerank.test.ts         # testes re-ranking apenas
+vitest run lib/__tests__/context-optimizer.test.ts  # testes otimizador apenas
+npm run test:metrics                                # SDK de métricas
+```
+
+## Deploy
+
+- [Configuração Vercel](vercel.json): timeouts, regiões, configurações do runtime
+- [Configuração Next.js](next.config.ts): `tiktoken` como `serverExternalPackages` (WASM — não remover)
+- [Middleware](middleware.ts): rate limiting aplicado antes de qualquer route handler, injeta headers `X-RateLimit-*`
+- [Guia de métricas](docs/metrics-system.md): observabilidade, dashboard, configuração
+
+**Deploy na Vercel:**
+
+```bash
+npm run build   # validar build local antes
+vercel --prod   # deploy de produção
+```
+
+## Identidade Visual e Sistema de Design
+
+- [Brand Kit em CLAUDE.md](CLAUDE.md#brand-kit-asof): paleta completa, tipografia, padrões de componentes
+- [Componentes shadcn/ui](components/ui/): badge, avatar, button, card, scroll-area, input, textarea, separator
+- [Estilos globais](app/globals.css): variáveis CSS, Tailwind v4
+
+**Paleta institucional ASOF (usar exclusivamente):**
+
+| Token | Hex | Uso |
+|-------|-----|-----|
+| Preto Profundo | `#000000` | Texto principal, bordas fortes |
+| Azul Escuro | `#045495` | Botões, links, cabeçalhos |
+| Azul Claro | `#76AEEA` | Hover, ícones, destaques |
+| Azul Pastel | `#BAD7F7` | Fundos de avisos, badges |
+| Lavanda Neutra | `#F3F3FC` | Fundo geral, áreas neutras |
+
+**Tipografia:** Roboto Bold (títulos), Segoe UI / Tahoma / Verdana (corpo)
+
+## Convenções para Agentes de IA
+
+**Regras críticas — leia antes de modificar qualquer arquivo:**
+
+1. **Nunca use "diplomacia"** no system prompt ou em qualquer texto visível ao usuário. Use sempre "Serviço Exterior Brasileiro".
+2. **RPC correta:** `sofia_match_documents` (não `match_documents` nem `sofia_match_docs`).
+3. **tiktoken é WASM** — jamais remova `serverExternalPackages: ['tiktoken']` do `next.config.ts`.
+4. **Limite Vercel:** `maxDuration = 30` em `/api/chat` — não aumentar (Free tier).
+5. **RAG threshold:** manter `>= 0.6`; o padrão é `0.7`. Abaixo disso aumenta ruído.
+6. **Rate limiting duplo:** in-memory (`lib/rate-limit.ts`) + Supabase (`rate_limit_entries`). Não remover nenhuma camada.
+7. **Logger:** use `logger` de `lib/logger.ts` em vez de `console.*` (silenciado em produção, exceto `logger.error`).
+8. **Validação Zod:** sempre chamar `safeValidateChatRequest()` antes de processar qualquer payload.
+9. **Degradação graciosa:** falhas em RAG/embedding retornam `[]` e continuam sem contexto — nunca lançam exceção para o usuário.
+10. **Paralelização:** embedding e conversão de mensagens devem ocorrer simultaneamente via `Promise.all`.
+
+**Padrões de código:**
+
+```typescript
+// Rate limiting (app/api/chat/route.ts)
+import { rateLimit } from '@/lib/rate-limit'
+const { isRateLimited, reset } = rateLimit(clientId, { interval: 60000, limit: 20 })
+
+// Validação (app/api/chat/route.ts)
+import { safeValidateChatRequest } from '@/lib/validation/schemas'
+const result = safeValidateChatRequest(body)
+if (!result.success) return new Response(..., { status: 400 })
+
+// RAG com degradação graciosa (app/api/chat/route.ts)
+const sources = await retrieveContext(query).catch(() => [])
+
+// Re-ranking + otimização (app/api/chat/route.ts)
+const reranked = rerankSources(sources, query)
+const { chunks } = optimizeContext(reranked, { maxTokens: 2000, minChunks: 3, maxChunks: 5 })
+
+// Streaming (app/api/chat/route.ts)
+const result = streamText({ model: openai('gpt-4o'), system: SYSTEM_PROMPT, messages })
+return result.toUIMessageStreamResponse()
+```
+
+**Ingestão de documentos:**
+
+```bash
+# Adicionar novos documentos legais:
+# 1. Converter PDF para TXT: python scripts/convert_docs.py arquivo.pdf
+# 2. Colocar .txt em docs/leis/ ou docs/decretos/ ou docs/convencoes/
+# 3. Executar: npm run ingest
+# Chunks: 1000 chars, overlap 200, lotes de 10, mínimo 50 chars por chunk
+```
+
+## Optional
+
+- [Guia de rate limiting](RATE_LIMITING_SETUP.md): configuração detalhada das duas camadas
+- [Conversores PDF](scripts/convert_docs.py): Python — converte PDF individual para TXT
+- [Conversor em lote](scripts/convert_pdfs.py): Python — converte diretório de PDFs
+- [Página de teste de conexão](app/test-connection/page.tsx): valida conectividade com Supabase
+- [Dashboard de métricas](app/metrics/page.tsx): visualização interna de uso e custos
+- [Configuração de agentes Claude](.claude/agents/): especializações para AI Engineer e Test Engineer
