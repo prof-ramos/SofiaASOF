@@ -194,8 +194,10 @@ O sistema deve continuar funcionando mesmo quando componentes falham:
 Exemplo em `app/api/chat/route.ts`:
 
 ```typescript
+import { logger } from '@/lib/logger'
+
 const ragPromise = retrieveContext(query).catch((error) => {
-  console.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
+  logger.error('[RAG ERROR]: Context retrieval failed, proceeding without context:', error)
   return [] // Degradação graciosa
 })
 ```
@@ -235,17 +237,18 @@ Após a busca vetorial, dois passos adicionais refinam os resultados:
 ```typescript
 import { rerankSources } from '@/lib/rag-rerank'
 
-const reranked = rerankSources(sources, query)
+const reranked = await rerankSources(query, sources)
 ```
 
 **Otimização de contexto** (`lib/context-optimizer.ts`):
 ```typescript
-import { optimizeContext } from '@/lib/context-optimizer'
+import { buildDynamicContextPrompt } from '@/lib/context-optimizer'
 
-const { chunks, tokenCount } = optimizeContext(rerankedSources, {
-  maxTokens: 2000,
+const contextPrompt = buildDynamicContextPrompt(rerankedSources, {
+  maxContextTokens: 2000,
   minChunks: 3,
   maxChunks: 5,
+  diversityThreshold: 2,
 })
 ```
 
@@ -378,6 +381,70 @@ background: #F3F3FC;
 ```
 
 Ao criar ou modificar componentes visuais, sempre seguir esses tokens. Evite cores arbitrárias — use apenas as da paleta institucional acima.
+
+## Operações via CLI (100% sem painel)
+
+Todo o ciclo de vida do projeto — setup, variáveis de ambiente, deploy, logs, banco — é executado via CLI. Nenhum painel web é necessário.
+
+### Setup completo (primeira vez)
+
+```bash
+npm i -g vercel supabase     # instalar CLIs globais
+cp .env.local.example .env.local  # preencher variáveis
+bash scripts/setup.sh        # setup end-to-end: deps + Supabase + Vercel env + deploy + ingestão
+```
+
+### Variáveis de ambiente (Vercel CLI)
+
+```bash
+# Adicionar/atualizar uma variável
+echo "sk-..." | vercel env add OPENAI_API_KEY production
+echo "sk-..." | vercel env add OPENAI_API_KEY preview
+echo "sk-..." | vercel env add OPENAI_API_KEY development
+
+# Listar todas as variáveis configuradas
+vercel env ls
+
+# Remover uma variável
+vercel env rm NOME_DA_VARIAVEL production
+
+# Sincronizar .env.local com as variáveis do projeto Vercel
+vercel env pull .env.local
+```
+
+### Deploy
+
+```bash
+npm run deploy:prod   # vercel --prod (deploy de produção)
+npm run deploy:prev   # vercel       (deploy de preview)
+npm run build         # validar build localmente antes de fazer deploy
+```
+
+### Logs e monitoramento
+
+```bash
+vercel logs                          # logs do último deploy
+vercel logs --follow                 # stream de logs em tempo real
+vercel inspect                       # inspecionar último deployment
+vercel ls                            # listar todos os deployments
+```
+
+### Banco de dados (Supabase CLI)
+
+```bash
+npm run db:push                      # supabase db push (aplica novas migrações)
+npm run db:status                    # supabase migration list (status das migrações)
+supabase login                       # autenticar no Supabase
+supabase link --project-ref <ref>    # vincular projeto local
+supabase db diff                     # ver diff entre schema local e remoto
+```
+
+### Ingestão de documentos
+
+```bash
+npm run ingest                       # ingere todos os .txt de /docs
+npm run ingest -- --file=docs/leis/arquivo.txt  # ingere arquivo específico
+```
 
 ## Observações Importantes
 

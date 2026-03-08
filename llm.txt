@@ -81,8 +81,8 @@ Content-Type: application/json
 ## Pipeline RAG
 
 - [Core RAG](lib/rag.ts): `generateEmbedding()`, `retrieveContext()`, `buildContextPrompt()`, `retrieveContextBatch()`
-- [Re-ranking](lib/rag-rerank.ts): `rerankSources()` — bônus por keywords, penalidade por tamanho, score por posição; stub pronto para cross-encoder (Xenova)
-- [Otimizador de contexto](lib/context-optimizer.ts): `optimizeContext()` — respeita limite de 2000 tokens, min 3 / max 5 chunks, máx 2 chunks por documento
+- [Re-ranking](lib/rag-rerank.ts): `rerankSources(query, sources)` — bônus por keywords, penalidade por tamanho, score por posição; stub pronto para cross-encoder (Xenova)
+- [Otimizador de contexto](lib/context-optimizer.ts): `buildDynamicContextPrompt(sources, options)` com `maxContextTokens` — respeita limite de 2000 tokens, min 3 / max 5 chunks, máx 2 chunks por documento
 - [System prompt da SOFIA](lib/system-prompt.ts): personalidade, regras de citação legal, hierarquia de fontes, restrições de linguagem
 - [Métricas](lib/metrics.ts): contagem de tokens via tiktoken (cl100k_base), preços por modelo, logging no Supabase
 
@@ -115,18 +115,51 @@ vitest run lib/__tests__/context-optimizer.test.ts  # testes otimizador apenas
 npm run test:metrics                                # SDK de métricas
 ```
 
-## Deploy
+## Deploy e Operações (100% CLI — sem painel)
 
 - [Configuração Vercel](vercel.json): timeouts, regiões, configurações do runtime
 - [Configuração Next.js](next.config.ts): `tiktoken` como `serverExternalPackages` (WASM — não remover)
 - [Middleware](middleware.ts): rate limiting aplicado antes de qualquer route handler, injeta headers `X-RateLimit-*`
-- [Guia de métricas](docs/metrics-system.md): observabilidade, dashboard, configuração
+- [Script de setup completo](scripts/setup.sh): `bash scripts/setup.sh` — executa todo o ciclo: deps + Supabase + env vars Vercel + deploy + ingestão
+- [Guia de métricas](docs/metrics-system.md): observabilidade, configuração
 
-**Deploy na Vercel:**
+**Setup inicial:**
 
 ```bash
-npm run build   # validar build local antes
-vercel --prod   # deploy de produção
+npm i -g vercel supabase       # instalar CLIs
+cp .env.local.example .env.local && nano .env.local  # preencher variáveis
+bash scripts/setup.sh          # setup end-to-end automático
+```
+
+**Deploy:**
+
+```bash
+npm run build          # validar build local antes
+npm run deploy:prod    # vercel --prod (produção)
+npm run deploy:prev    # vercel       (preview)
+```
+
+**Variáveis de ambiente via CLI:**
+
+```bash
+echo "sk-..." | vercel env add OPENAI_API_KEY production
+vercel env ls                  # listar todas as variáveis
+vercel env pull .env.local     # sincronizar local com Vercel
+```
+
+**Logs e monitoramento:**
+
+```bash
+vercel logs                    # logs do último deployment
+vercel logs --follow           # stream em tempo real
+vercel inspect                 # inspecionar deployment
+```
+
+**Banco de dados:**
+
+```bash
+npm run db:push                # supabase db push (aplica migrações)
+npm run db:status              # listar status das migrações
 ```
 
 ## Identidade Visual e Sistema de Design
@@ -178,8 +211,8 @@ if (!result.success) return new Response(..., { status: 400 })
 const sources = await retrieveContext(query).catch(() => [])
 
 // Re-ranking + otimização (app/api/chat/route.ts)
-const reranked = rerankSources(sources, query)
-const { chunks } = optimizeContext(reranked, { maxTokens: 2000, minChunks: 3, maxChunks: 5 })
+const reranked = await rerankSources(query, sources)
+const contextPrompt = buildDynamicContextPrompt(reranked, { maxContextTokens: 2000, minChunks: 3, maxChunks: 5, diversityThreshold: 2 })
 
 // Streaming (app/api/chat/route.ts)
 const result = streamText({ model: openai('gpt-4o'), system: SYSTEM_PROMPT, messages })
