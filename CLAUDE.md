@@ -11,6 +11,7 @@ SOFIA (Suporte Orientado às Funções e Interesses dos Associados) é um agente
 ## Comandos Importantes
 
 ### Desenvolvimento
+
 ```bash
 npm run dev          # Inicia servidor de desenvolvimento (http://localhost:3000)
 npm run build        # Build de produção
@@ -19,6 +20,7 @@ npm run lint         # Executa ESLint
 ```
 
 ### Testes
+
 ```bash
 vitest               # Executa todos os testes (98 testes, Vitest + jsdom)
 vitest --ui          # Executa testes com interface visual
@@ -26,12 +28,14 @@ npm run test:metrics # Testa SDK de métricas especificamente
 ```
 
 ### Ingestão de Documentos
+
 ```bash
 npm run ingest                                # Processa todos os documentos em /docs
 npm run ingest -- --file=caminho/arquivo.txt  # Processa arquivo específico
 ```
 
 ### Migrações e Setup
+
 ```bash
 npm run db:push       # Aplica migrações do Supabase
 npm run db:status     # Lista status das migrações
@@ -45,7 +49,7 @@ npm run setup:metrics # Configura SDK de métricas
 
 ### Fluxo RAG (Retrieval Augmented Generation)
 
-```
+```text
 Usuário digita pergunta
         ↓
 middleware.ts (Next.js middleware — rate limiting por IP, headers X-RateLimit-*)
@@ -74,7 +78,7 @@ middleware.ts (Next.js middleware — rate limiting por IP, headers X-RateLimit-
 
 ### Estrutura de Diretórios
 
-```
+```text
 ├── app/
 │   ├── api/
 │   │   ├── chat/route.ts          # Endpoint principal do chat (RAG + streaming)
@@ -179,6 +183,7 @@ if (!validationResult.success) {
 ```
 
 Limites do schema atual:
+
 - Máximo 50 mensagens por request
 - Máximo 10.000 caracteres por mensagem
 - Máximo 20 partes por mensagem
@@ -203,6 +208,7 @@ const ragPromise = retrieveContext(query).catch((error) => {
 ```
 
 No cliente (`ChatInterface.tsx`), os erros são mapeados para mensagens em português:
+
 - Timeout/abort → sugestão de retry
 - 429 → mensagem de rate limit com tempo de espera
 - Erros de rede → problema de conexão
@@ -227,13 +233,14 @@ if (rateCheck.isRateLimited) {
 }
 ```
 
-2. **Supabase** (`rate_limit_entries`) — via `checkRateLimit()` em `lib/metrics.ts`, persistido entre instâncias.
+1. **Supabase** (`rate_limit_entries`) — via `checkRateLimit()` em `lib/metrics.ts`, persistido entre instâncias.
 
 ### Re-ranking e Otimização de Contexto
 
 Após a busca vetorial, dois passos adicionais refinam os resultados:
 
 **Re-ranking** (`lib/rag-rerank.ts`):
+
 ```typescript
 import { rerankSources } from '@/lib/rag-rerank'
 
@@ -241,6 +248,7 @@ const reranked = await rerankSources(query, sources)
 ```
 
 **Otimização de contexto** (`lib/context-optimizer.ts`):
+
 ```typescript
 import { buildDynamicContextPrompt } from '@/lib/context-optimizer'
 
@@ -293,7 +301,7 @@ O system prompt (`lib/system-prompt.ts`) define a personalidade e regras da SOFI
 - Reconhecer limites e encaminhar para Assessoria Jurídica quando necessário
 - Hierarquia de fontes: Legislação > Regulamentos MRE > Posições ASOF > Jurisprudência
 
-## Ingestão de Documentos
+## Ingestão da Base de Conhecimento
 
 1. Coloque documentos `.txt` em `/docs/` (organizado em subpastas: `leis/`, `decretos/`, `convencoes/`)
 2. Execute `npm run ingest`
@@ -305,6 +313,7 @@ O system prompt (`lib/system-prompt.ts`) define a personalidade e regras da SOFI
    - Faz upsert na tabela `sofia_documents` com metadados (source, title, chunkIndex, totalChunks)
 
 Scripts auxiliares de conversão em `scripts/`:
+
 - `convert_docs.py` — Converte PDF individual para TXT
 - `convert_pdfs.py` — Converte PDFs em lote
 
@@ -325,7 +334,7 @@ PORTAL_TRANSPARENCIA_API_KEY=...
 
 Copie `.env.local.example` para `.env.local` e preencha os valores antes de iniciar.
 
-## Testes
+## Execução de Testes
 
 98 testes automatizados com Vitest e jsdom. Sempre mockar o Supabase em testes:
 
@@ -339,6 +348,7 @@ vi.mock('@/lib/supabase', () => ({
 Fixtures reutilizáveis em `lib/__tests__/fixtures/sources.ts` fornecem dados determinísticos para os testes de RAG.
 
 Para rodar apenas um grupo de testes:
+
 ```bash
 vitest run lib/__tests__/rag.test.ts
 vitest run lib/__tests__/rag-rerank.test.ts

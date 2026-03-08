@@ -167,9 +167,10 @@ export async function POST(req: Request) {
     const err = error as { status?: number; message?: string }
 
     if (err?.status === 401) {
+      // Não expor detalhes de credenciais ao cliente
       return new Response(
-        JSON.stringify({ error: 'Chave de API inválida ou expirada.' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Erro ao processar a solicitação.' }),
+        { status: 502, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
