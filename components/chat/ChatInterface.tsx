@@ -14,7 +14,7 @@ import { logger } from '@/lib/logger'
 // Hoist static I/O - transport config constant at module scope
 const TRANSPORT_CONFIG = {
   api: '/api/chat',
-  timeout: 35000 // 35s (maior que maxDuration de 30s do servidor)
+  timeout: 25000 // 25s — dispara antes do maxDuration=30s do servidor para mostrar erro de timeout limpo
 } as const
 
 // Tipos de erro específicos
