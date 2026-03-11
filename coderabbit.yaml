@@ -1,0 +1,113 @@
+language: pt-BR
+early_access: false
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    ignore_title_keywords:
+      - WIP
+      - DO NOT REVIEW
+    drafts: false
+  path_filters:
+    - "!**/*.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/pnpm-lock.yaml"
+  path_instructions:
+    - path: "app/api/**/*.ts"
+      instructions: |
+        Revise endpoints de API com foco em:
+        - Validação de entrada e tratamento de erros
+        - Segurança (rate limiting, autenticação, sanitização)
+        - Práticas de streaming do Vercel AI SDK
+        - Performance e timeouts
+    - path: "lib/**/*.ts"
+      instructions: |
+        Revise utilitários e bibliotecas com foco em:
+        - Reutilização e modularidade
+        - Tratamento de erros e casos extremos
+        - Type safety e TypeScript best practices
+        - Segurança de credenciais e secrets
+    - path: "components/**/*.tsx"
+      instructions: |
+        Revise componentes React com foco em:
+        - Acessibilidade (a11y)
+        - Performance (memoização, re-renders)
+        - Responsividade e UX
+        - Padrões de composição
+    - path: "supabase/**/*.sql"
+      instructions: |
+        Revise migrações e schema SQL com foco em:
+        - Integridade de dados e constraints
+        - Índices e performance de queries
+        - Row Level Security (RLS) e permissões
+        - Compatibilidade de migrações
+    - path: "scripts/**/*.ts"
+      instructions: |
+        Revise scripts com foco em:
+        - Validação de variáveis de ambiente
+        - Tratamento de erros e logging
+        - Idempotência e recuperação
+        - Documentação de uso
+  tools:
+    shellcheck:
+      enabled: true
+    ruff:
+      enabled: false
+    markdownlint:
+      enabled: true
+    languagetool:
+      enabled: true
+      enabled_only: false
+      level: default
+      enabled_rules: []
+      disabled_rules: []
+      enabled_categories: []
+      disabled_categories: []
+    biome:
+      enabled: false
+    hadolint:
+      enabled: false
+    swiftlint:
+      enabled: false
+    phpstan:
+      enabled: false
+    golangci-lint:
+      enabled: false
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    checkov:
+      enabled: false
+    detekt:
+      enabled: false
+    eslint:
+      enabled: true
+    buf:
+      enabled: false
+    trufflehog:
+      enabled: false
+    trivy:
+      enabled: false
+    semgrep:
+      enabled: false
+    circleci:
+      enabled: false
+    validate_openapispec:
+      enabled: false
+    pmd:
+      enabled: false
+    cppcheck:
+      enabled: false
+    sqlfluff:
+      enabled: true
+      config:
+        dialect: postgres
+chat:
+  auto_reply: true
